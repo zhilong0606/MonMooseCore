@@ -5,19 +5,22 @@ using System.Text;
 using System.Threading.Tasks;
 using Structure;
 
-public class FlatStructureExporter : StructureExporter
+namespace MonMooseCore.DataExporter
 {
-    protected override void OnExport()
+    public class FlatStructureExporter : StructureExporter
     {
-    }
+        protected override void OnExport()
+        {
+        }
 
-    protected override string GetExportName(BaseStructureInfo structureInfo)
-    {
-        throw new NotImplementedException();
-    }
+        protected override string GetExportName(StructureInfo structureInfo)
+        {
+            throw new NotImplementedException();
+        }
 
-    protected override string GetExportName(EBasicStructureType type)
-    {
-        throw new NotImplementedException();
+        protected override string GetExportName(EBasicStructureType type)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

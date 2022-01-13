@@ -4,10 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-public class JsonDataExporter : DataExporter
+namespace MonMooseCore.DataExporter
 {
-    protected override void OnExport()
+    public class JsonDataExporter : DataExporter
     {
-        throw new NotImplementedException();
+        protected override void OnExport()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

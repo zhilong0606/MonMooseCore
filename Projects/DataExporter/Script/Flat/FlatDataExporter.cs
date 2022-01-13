@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-public class FlatDataExporter : DataExporter
+namespace MonMooseCore.DataExporter
 {
-    protected override void OnExport()
+    public class FlatDataExporter : DataExporter
     {
+        protected override void OnExport()
+        {
+        }
     }
 }

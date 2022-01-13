@@ -5,24 +5,31 @@ using System.Text;
 using System.Threading.Tasks;
 using Structure;
 
-public abstract class Exporter
+namespace MonMooseCore.DataExporter
 {
-    protected UserContext m_context;
-    public Action<double, string> actionOnProcessMsgSend;
-
-    public void Export(UserContext context)
+    public abstract class Exporter<T> : Exporter
     {
-        m_context = context;
-        OnExport();
+        protected T m_context;
+
+        public void Export(T context)
+        {
+            m_context = context;
+            OnExport();
+        }
     }
 
-    protected abstract void OnExport();
-
-    protected void SendMsg(double processValue, string content)
+    public abstract class Exporter
     {
-        if (actionOnProcessMsgSend != null)
+        public Action<double, string> actionOnProcessMsgSend;
+
+        protected abstract void OnExport();
+
+        protected void SendMsg(double processValue, string content)
         {
-            actionOnProcessMsgSend(processValue, content);
+            if (actionOnProcessMsgSend != null)
+            {
+                actionOnProcessMsgSend(processValue, content);
+            }
         }
     }
 }

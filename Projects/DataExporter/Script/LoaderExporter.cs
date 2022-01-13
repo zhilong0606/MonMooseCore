@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-public abstract class LoaderExporter : Exporter
+namespace MonMooseCore.DataExporter
 {
+    public abstract class LoaderExporter : Exporter<LoaderExportContext>
+    {
+    }
 }

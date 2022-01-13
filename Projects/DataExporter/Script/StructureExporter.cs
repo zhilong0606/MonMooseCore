@@ -5,13 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 using Structure;
 
-public abstract class StructureExporter : Exporter
+namespace MonMooseCore.DataExporter
 {
-    protected override void OnExport()
+    public abstract class StructureExporter : Exporter<StructureExportContext>
     {
+        protected override void OnExport()
+        {
 
+        }
+
+        protected abstract string GetExportName(StructureInfo structureInfo);
+        protected abstract string GetExportName(EBasicStructureType type);
     }
-
-    protected abstract string GetExportName(BaseStructureInfo structureInfo);
-    protected abstract string GetExportName(EBasicStructureType type);
 }

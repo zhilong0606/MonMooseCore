@@ -4,4 +4,15 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DataDefinition\DataDefinition.csproj" />
+    <ProjectReference Include="..\FileUtility\FileUtility.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Protobuf">
+      <HintPath>Plugin\Protobuf.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

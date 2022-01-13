@@ -7,76 +7,79 @@ using System.Threading.Tasks;
 using Data;
 using Structure;
 
-public class ProtoLoaderExporter : LoaderExporter
+namespace MonMooseCore.DataExporter
 {
-    private FileWriter m_loaderWriter = new FileWriter();
-
-    private const string m_outputName = "StaticDataManager_Proto";
-    private const string m_initLoaderFormat = "m_loaderMap.Add(\"{0}\", new ProtoDataLoader<{1}{0}{2}, {1}{0}{2}List>(m_{3}List, {1}{0}{2}List.Parser.ParseFrom, (fromList, toList) => {{ toList.Clear(); toList.AddRange(fromList.List); }}));";
-    private const string m_annotationFormat = "//{0}";
-    private const string m_listDefineFormat = "private List<{1}{0}{2}> m_{3}List = new List<{1}{0}{2}>();";
-    private const string m_getItemFuncFormat = "public {1}{0}{2} Get{0}(int id) {{ foreach (var info in m_{3}List) if (info.Id == id) return info; return null; }}";
-    private const string m_getEnumIdItemFuncFormat = "public {1}{0}{2} Get{0}(E{0}Id id) {{ foreach (var info in m_{3}List) if (info.Id == (int)id) return info; return null; }}";
-    private const string m_getEnumeratorFuncFormat = "public IEnumerable<{1}{0}{2}> {3}List {{ get {{ return m_{3}List; }} }}";
-    private const string m_getItemCountFuncFormat = "public int {0}Count {{ get {{ return m_{0}List.Count; }} }}";
-
-    protected override void OnExport()
+    public class ProtoLoaderExporter : LoaderExporter
     {
-        m_loaderWriter.AppendLine("using System.Collections.Generic;");
-        m_loaderWriter.AppendLine(string.Format("using {0};", m_context.namespaceStr));
-        m_loaderWriter.AppendLine("");
-        m_loaderWriter.AppendLine(string.Format("namespace {0}", m_context.usingNamespaceStr));
-        m_loaderWriter.AppendLine("{");
-        m_loaderWriter.StartTab();
+        private FileWriter m_loaderWriter = new FileWriter();
+
+        private const string m_outputName = "StaticDataManager_Proto";
+        private const string m_initLoaderFormat = "m_loaderMap.Add(\"{0}\", new ProtoDataLoader<{1}{0}{2}, {1}{0}{2}List>(m_{3}List, {1}{0}{2}List.Parser.ParseFrom, (fromList, toList) => {{ toList.Clear(); toList.AddRange(fromList.List); }}));";
+        private const string m_annotationFormat = "//{0}";
+        private const string m_listDefineFormat = "private List<{1}{0}{2}> m_{3}List = new List<{1}{0}{2}>();";
+        private const string m_getItemFuncFormat = "public {1}{0}{2} Get{0}(int id) {{ foreach (var info in m_{3}List) if (info.Id == id) return info; return null; }}";
+        private const string m_getEnumIdItemFuncFormat = "public {1}{0}{2} Get{0}(E{0}Id id) {{ foreach (var info in m_{3}List) if (info.Id == (int)id) return info; return null; }}";
+        private const string m_getEnumeratorFuncFormat = "public IEnumerable<{1}{0}{2}> {3}List {{ get {{ return m_{3}List; }} }}";
+        private const string m_getItemCountFuncFormat = "public int {0}Count {{ get {{ return m_{0}List.Count; }} }}";
+
+        protected override void OnExport()
         {
-            m_loaderWriter.AppendLine("public partial class StaticDataManager");
+            m_loaderWriter.AppendLine("using System.Collections.Generic;");
+            m_loaderWriter.AppendLine(string.Format("using {0};", m_context.namespaceStr));
+            m_loaderWriter.AppendLine("");
+            m_loaderWriter.AppendLine(string.Format("namespace {0}", m_context.usingNamespaceStr));
             m_loaderWriter.AppendLine("{");
             m_loaderWriter.StartTab();
             {
-                m_loaderWriter.AppendLine("partial void OnInitLoaders()");
+                m_loaderWriter.AppendLine("public partial class StaticDataManager");
                 m_loaderWriter.AppendLine("{");
                 m_loaderWriter.StartTab();
                 {
+                    m_loaderWriter.AppendLine("partial void OnInitLoaders()");
+                    m_loaderWriter.AppendLine("{");
+                    m_loaderWriter.StartTab();
+                    {
+                        foreach (var kv in DataObjectManager.Instance.structureMap)
+                        {
+                            m_loaderWriter.AppendLine(string.Format(m_initLoaderFormat, kv.Key.name, m_context.prefixStr, m_context.postfixStr, ChangeFirstToLower(kv.Key.name)));
+                        }
+                    }
+                    m_loaderWriter.EndTab();
+                    m_loaderWriter.AppendLine("}");
                     foreach (var kv in DataObjectManager.Instance.structureMap)
                     {
-                        m_loaderWriter.AppendLine(string.Format(m_initLoaderFormat, kv.Key.name, m_context.prefixStr, m_context.postfixStr, ChangeFirstToLower(kv.Key.name)));
+                        string structureName = kv.Key.name;
+                        m_loaderWriter.AppendLine("");
+                        m_loaderWriter.AppendLine(string.Format(m_annotationFormat, structureName));
+                        m_loaderWriter.AppendLine(string.Format(m_listDefineFormat, structureName, m_context.prefixStr, m_context.postfixStr, ChangeFirstToLower(structureName)));
+                        m_loaderWriter.AppendLine(string.Format(kv.Key.isEnumId ? m_getEnumIdItemFuncFormat : m_getItemFuncFormat, structureName, m_context.prefixStr, m_context.postfixStr, ChangeFirstToLower(structureName)));
+                        m_loaderWriter.AppendLine(string.Format(m_getEnumeratorFuncFormat, structureName, m_context.prefixStr, m_context.postfixStr, ChangeFirstToLower(structureName)));
+                        m_loaderWriter.AppendLine(string.Format(m_getItemCountFuncFormat, ChangeFirstToLower(structureName)));
                     }
                 }
                 m_loaderWriter.EndTab();
                 m_loaderWriter.AppendLine("}");
-                foreach (var kv in DataObjectManager.Instance.structureMap)
-                {
-                    string structureName = kv.Key.name;
-                    m_loaderWriter.AppendLine("");
-                    m_loaderWriter.AppendLine(string.Format(m_annotationFormat, structureName));
-                    m_loaderWriter.AppendLine(string.Format(m_listDefineFormat, structureName, m_context.prefixStr, m_context.postfixStr, ChangeFirstToLower(structureName)));
-                    m_loaderWriter.AppendLine(string.Format(kv.Key.isEnumId ? m_getEnumIdItemFuncFormat : m_getItemFuncFormat, structureName, m_context.prefixStr, m_context.postfixStr, ChangeFirstToLower(structureName)));
-                    m_loaderWriter.AppendLine(string.Format(m_getEnumeratorFuncFormat, structureName, m_context.prefixStr, m_context.postfixStr, ChangeFirstToLower(structureName)));
-                    m_loaderWriter.AppendLine(string.Format(m_getItemCountFuncFormat, ChangeFirstToLower(structureName)));
-                }
             }
             m_loaderWriter.EndTab();
             m_loaderWriter.AppendLine("}");
-        }
-        m_loaderWriter.EndTab();
-        m_loaderWriter.AppendLine("}");
 
-        string outputPath = FolderManager.Instance.GetSubDirPath(m_context.name + "/" + m_context.exportMode.modeType.ToString(), EFolderType.Code) + "\\" + m_outputName + ".cs";
-        m_loaderWriter.WriteFile(outputPath);
-        if (!string.IsNullOrEmpty(m_context.structureExportPath) && Directory.Exists(m_context.structureExportPath))
+            string outputPath = FolderManager.Instance.GetSubDirPath(m_context.name + "/" + m_context.exportMode.modeType.ToString(), EFolderType.Code) + "\\" + m_outputName + ".cs";
+            m_loaderWriter.WriteFile(outputPath);
+            if (!string.IsNullOrEmpty(m_context.structureExportPath) && Directory.Exists(m_context.structureExportPath))
+            {
+                File.Copy(outputPath, m_context.structureExportPath + m_outputName + ".cs", true);
+            }
+        }
+
+        private static string ChangeFirstToLower(string str)
         {
-            File.Copy(outputPath, m_context.structureExportPath + m_outputName + ".cs", true);
+            return str.Substring(0, 1).ToLower() + str.Substring(1);
         }
-    }
 
-    private static string ChangeFirstToLower(string str)
-    {
-        return str.Substring(0, 1).ToLower() + str.Substring(1);
-    }
+        private static string ChangeFirstToUpper(string str)
+        {
+            return str.Substring(0, 1).ToUpper() + str.Substring(1);
+        }
 
-    private static string ChangeFirstToUpper(string str)
-    {
-        return str.Substring(0, 1).ToUpper() + str.Substring(1);
     }
-
 }
