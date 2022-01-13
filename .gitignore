@@ -1,0 +1,6 @@
+Projects/.vs/
+
+Projects/DataDefinition/*.user
+Projects/DataDefinition/.vs/
+Projects/DataDefinition/bin/
+Projects/DataDefinition/obj/
