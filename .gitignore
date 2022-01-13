@@ -4,3 +4,8 @@ Projects/DataDefinition/*.user
 Projects/DataDefinition/.vs/
 Projects/DataDefinition/bin/
 Projects/DataDefinition/obj/
+
+Projects/DataExporter/*.user
+Projects/DataExporter/.vs/
+Projects/DataExporter/bin/
+Projects/DataExporter/obj/
