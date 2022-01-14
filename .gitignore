@@ -9,3 +9,13 @@ Projects/DataExporter/*.user
 Projects/DataExporter/.vs/
 Projects/DataExporter/bin/
 Projects/DataExporter/obj/
+
+Projects/DataObject/*.user
+Projects/DataObject/.vs/
+Projects/DataObject/bin/
+Projects/DataObject/obj/
+
+Projects/FileUtility/*.user
+Projects/FileUtility/.vs/
+Projects/FileUtility/bin/
+Projects/FileUtility/obj/
