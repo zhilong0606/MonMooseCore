@@ -1,0 +1,5 @@
+E:\projects\MonMooseCore\Projects\DataDefinition\obj\Debug\DataDefinition.csproj.CoreCompileInputs.cache
+E:\projects\MonMooseCore\Build\DataDefinition.dll
+E:\projects\MonMooseCore\Build\DataDefinition.pdb
+E:\projects\MonMooseCore\Projects\DataDefinition\obj\Debug\DataDefinition.dll
+E:\projects\MonMooseCore\Projects\DataDefinition\obj\Debug\DataDefinition.pdb

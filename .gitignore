@@ -1,5 +1,10 @@
 Projects/.vs/
 
+Projects/BaseCore/*.user
+Projects/BaseCore/.vs/
+Projects/BaseCore/bin/
+Projects/BaseCore/obj/
+
 Projects/DataDefinition/*.user
 Projects/DataDefinition/.vs/
 Projects/DataDefinition/bin/
@@ -14,8 +19,3 @@ Projects/DataObject/*.user
 Projects/DataObject/.vs/
 Projects/DataObject/bin/
 Projects/DataObject/obj/
-
-Projects/FileUtility/*.user
-Projects/FileUtility/.vs/
-Projects/FileUtility/bin/
-Projects/FileUtility/obj/

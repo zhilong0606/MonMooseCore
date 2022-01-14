@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\..\Build\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Protobuf">
+      <HintPath>Plugin\Protobuf.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -40,6 +43,39 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Script\ExportContext\DataExportContext.cs" />
+    <Compile Include="Script\ExportContext\ExportContext.cs" />
+    <Compile Include="Script\ExportContext\LoaderExportContext.cs" />
+    <Compile Include="Script\ExportContext\StructureExportContext.cs" />
+    <Compile Include="Script\Exporter\DataExporter.cs" />
+    <Compile Include="Script\Exporter\Exporter.cs" />
+    <Compile Include="Script\Exporter\LoaderExporter.cs" />
+    <Compile Include="Script\Exporter\StructureExporter.cs" />
+    <Compile Include="Script\ExportResult\DataExportResult.cs" />
+    <Compile Include="Script\ExportResult\ExportResult.cs" />
+    <Compile Include="Script\ExportResult\LoaderExportResult.cs" />
+    <Compile Include="Script\ExportResult\StructureExportResult.cs" />
+    <Compile Include="Script\Flat\FlatDataExporter.cs" />
+    <Compile Include="Script\Flat\FlatStructureExporter.cs" />
+    <Compile Include="Script\Json\JsonDataExporter.cs" />
+    <Compile Include="Script\Json\JsonStructureExporter.cs" />
+    <Compile Include="Script\Proto\ProtoDataExporter.cs" />
+    <Compile Include="Script\Proto\ProtoLoaderExporter.cs" />
+    <Compile Include="Script\Proto\ProtoStructureExporter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BaseCore\BaseCore.csproj">
+      <Project>{e65e7182-c03d-4974-87ba-0b9f3ea8bfab}</Project>
+      <Name>BaseCore</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataObject\DataObject.csproj">
+      <Project>{2ebbbda7-0961-4147-94b1-e1bede208587}</Project>
+      <Name>DataObject</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataStructure\DataStructure.csproj">
+      <Project>{a721a7b4-7985-4475-b04e-34c1fdfea55a}</Project>
+      <Name>DataStructure</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\..\Build\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -40,6 +40,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Script\BasicDataValue.cs" />
+    <Compile Include="Script\ClassDataValue.cs" />
+    <Compile Include="Script\DataField.cs" />
+    <Compile Include="Script\DataObject.cs" />
+    <Compile Include="Script\DataObjectManager.cs" />
+    <Compile Include="Script\DataValue.cs" />
+    <Compile Include="Script\EnumDataValue.cs" />
+    <Compile Include="Script\ListDataValue.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DataStructure\DataStructure.csproj">
+      <Project>{a721a7b4-7985-4475-b04e-34c1fdfea55a}</Project>
+      <Name>DataStructure</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
