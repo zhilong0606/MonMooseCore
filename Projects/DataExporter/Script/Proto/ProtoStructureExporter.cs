@@ -23,16 +23,9 @@ namespace MonMooseCore.DataExporter
         private FileWriter m_ilWriter = new FileWriter();
 
         private const string m_outputName = "Structure";
-        private string m_protoOutputPath;
-        private string m_csOutputPath;
 
         protected override void OnExport()
         {
-            m_protoOutputPath = FolderManager.Instance.GetSubDirPath(m_context.name + "/" + m_context.exportMode.modeType.ToString(), EFolderType.IL);
-            PathUtility.TryGetRelativePosition(m_protoOutputPath, out m_protoOutputPath);
-            m_csOutputPath = FolderManager.Instance.GetSubDirPath(m_context.name + "/" + m_context.exportMode.modeType.ToString(), EFolderType.Code) + "\\";
-            m_csOutputPath = m_csOutputPath.Replace("\\", "/");
-
             CollectStructureLists();
             ExportHead();
             ExportEnum();
@@ -223,54 +216,19 @@ namespace MonMooseCore.DataExporter
 
         private void WriteIlFile()
         {
-            m_ilWriter.WriteFile(m_protoOutputPath + m_outputName + ".proto");
+            m_ilWriter.WriteFile(m_context.ilExportFolderPath + m_outputName + ".proto");
         }
 
         private void RunProtoc()
         {
-            string protoOutputFilePath = m_protoOutputPath + m_outputName + ".proto";
-            string csOutputFilePath = m_csOutputPath + m_outputName + ".cs";
-            string argStr = string.Format("--csharp_out={0} {1}", m_csOutputPath, protoOutputFilePath);
+            string protoOutputFilePath = m_context.ilExportFolderPath + m_outputName + ".proto";
+            string csOutputFilePath = m_context.structureExportFolderPath + m_outputName + ".cs";
+            string argStr = string.Format("--csharp_out={0} {1}", m_context.structureExportFolderPath, protoOutputFilePath);
             string errorMsg;
             if (!Utility.RunExe("protoc", argStr, out errorMsg))
             {
                 throw new Exception(errorMsg);
             }
-            m_context.assembly = GetCompilerAssembly(new string[] {csOutputFilePath});
-            if (!string.IsNullOrEmpty(m_context.structureExportPath) && Directory.Exists(m_context.structureExportPath))
-            {
-                File.Copy(csOutputFilePath, m_context.structureExportPath + m_outputName + ".cs", true);
-            }
-        }
-
-        protected Assembly GetCompilerAssembly(string[] codeFiles)
-        {
-            CodeDomProvider complier = CodeDomProvider.CreateProvider("CSharp");
-            CompilerParameters param = new CompilerParameters();
-            param.GenerateExecutable = false;
-            param.GenerateInMemory = true;
-            param.TreatWarningsAsErrors = true;
-            param.IncludeDebugInformation = false;
-            param.ReferencedAssemblies.Add("./Protobuf.dll");
-            param.ReferencedAssemblies.Add("System.dll");
-
-            string[] codes = new string[codeFiles.Length];
-            for (int i = 0; i < codeFiles.Length; ++i)
-            {
-                codes[i] = File.ReadAllText(codeFiles[i], Encoding.UTF8);
-            }
-
-            CompilerResults result = complier.CompileAssemblyFromSource(param, codes);
-            if (result.Errors.HasErrors)
-            {
-                StringBuilder sb = new StringBuilder(String.Empty);
-                foreach (object err in result.Errors)
-                {
-                    sb.Append(err).Append("\r\n");
-                }
-                throw new Exception(sb.ToString());
-            }
-            return result.CompiledAssembly;
         }
     }
 }

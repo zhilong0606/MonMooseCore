@@ -11,7 +11,8 @@ namespace MonMooseCore.DataExporter
         public string namespaceStr;
         public string prefixStr;
         public string postfixStr;
-        public string structureExportPath;
+        public string structureExportFolderPath;
+        public string ilExportFolderPath;
         public StructureManager structureManager;
     }
 }
