@@ -1,5 +1,0 @@
-E:\projects\MonMooseCore\Build\DataDefinition.dll
-E:\projects\MonMooseCore\Build\DataDefinition.pdb
-E:\projects\MonMooseCore\Projects\DataStructure\obj\Debug\DataStructure.csproj.CoreCompileInputs.cache
-E:\projects\MonMooseCore\Projects\DataStructure\obj\Debug\DataDefinition.dll
-E:\projects\MonMooseCore\Projects\DataStructure\obj\Debug\DataDefinition.pdb
