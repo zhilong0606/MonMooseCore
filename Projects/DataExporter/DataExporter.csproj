@@ -12,6 +12,7 @@
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -73,7 +74,7 @@
       <Name>DataObject</Name>
     </ProjectReference>
     <ProjectReference Include="..\DataStructure\DataStructure.csproj">
-      <Project>{a721a7b4-7985-4475-b04e-34c1fdfea55a}</Project>
+      <Project>{ad26b1d9-9894-491d-ae85-418950e0d512}</Project>
       <Name>DataStructure</Name>
     </ProjectReference>
   </ItemGroup>

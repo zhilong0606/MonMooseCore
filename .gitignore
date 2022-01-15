@@ -5,10 +5,10 @@ Projects/BaseCore/.vs/
 Projects/BaseCore/bin/
 Projects/BaseCore/obj/
 
-Projects/DataDefinition/*.user
-Projects/DataDefinition/.vs/
-Projects/DataDefinition/bin/
-Projects/DataDefinition/obj/
+Projects/DataStructure/*.user
+Projects/DataStructure/.vs/
+Projects/DataStructure/bin/
+Projects/DataStructure/obj/
 
 Projects/DataExporter/*.user
 Projects/DataExporter/.vs/

@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataExporter", "DataExporte
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseCore", "BaseCore\BaseCore.csproj", "{E65E7182-C03D-4974-87BA-0B9F3EA8BFAB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataStructure", "DataStructure\DataStructure.csproj", "{A721A7B4-7985-4475-B04E-34C1FDFEA55A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataStructure", "DataStructure\DataStructure.csproj", "{AD26B1D9-9894-491D-AE85-418950E0D512}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,10 +29,10 @@ Global
 		{E65E7182-C03D-4974-87BA-0B9F3EA8BFAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E65E7182-C03D-4974-87BA-0B9F3EA8BFAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E65E7182-C03D-4974-87BA-0B9F3EA8BFAB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A721A7B4-7985-4475-B04E-34C1FDFEA55A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A721A7B4-7985-4475-B04E-34C1FDFEA55A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A721A7B4-7985-4475-B04E-34C1FDFEA55A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A721A7B4-7985-4475-B04E-34C1FDFEA55A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD26B1D9-9894-491D-AE85-418950E0D512}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD26B1D9-9894-491D-AE85-418950E0D512}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD26B1D9-9894-491D-AE85-418950E0D512}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD26B1D9-9894-491D-AE85-418950E0D512}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
