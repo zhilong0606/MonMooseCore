@@ -10,7 +10,6 @@ namespace MonMooseCore.DataExporter
         public string postfixStr;
         public string loaderExportFolderPath;
         public string usingNamespaceStr;
-        public StructureManager structureManager;
         public DataObjectManager dataObjManager;
     }
 }

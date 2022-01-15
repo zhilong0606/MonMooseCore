@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -156,34 +157,34 @@ namespace MonMooseCore.DataExporter
             return null;
         }
 
-        //protected Assembly GetCompilerAssembly(string[] codeFiles)
-        //{
-        //    CodeDomProvider complier = CodeDomProvider.CreateProvider("CSharp");
-        //    CompilerParameters param = new CompilerParameters();
-        //    param.GenerateExecutable = false;
-        //    param.GenerateInMemory = true;
-        //    param.TreatWarningsAsErrors = true;
-        //    param.IncludeDebugInformation = false;
-        //    param.ReferencedAssemblies.Add("./Protobuf.dll");
-        //    param.ReferencedAssemblies.Add("System.dll");
+        protected Assembly GetCompilerAssembly(string[] codeFiles)
+        {
+            CodeDomProvider complier = CodeDomProvider.CreateProvider("CSharp");
+            CompilerParameters param = new CompilerParameters();
+            param.GenerateExecutable = false;
+            param.GenerateInMemory = true;
+            param.TreatWarningsAsErrors = true;
+            param.IncludeDebugInformation = false;
+            param.ReferencedAssemblies.Add("./Protobuf.dll");
+            param.ReferencedAssemblies.Add("System.dll");
 
-        //    string[] codes = new string[codeFiles.Length];
-        //    for (int i = 0; i < codeFiles.Length; ++i)
-        //    {
-        //        codes[i] = File.ReadAllText(codeFiles[i], Encoding.UTF8);
-        //    }
+            string[] codes = new string[codeFiles.Length];
+            for (int i = 0; i < codeFiles.Length; ++i)
+            {
+                codes[i] = File.ReadAllText(codeFiles[i], Encoding.UTF8);
+            }
 
-        //    CompilerResults result = complier.CompileAssemblyFromSource(param, codes);
-        //    if (result.Errors.HasErrors)
-        //    {
-        //        StringBuilder sb = new StringBuilder(String.Empty);
-        //        foreach (object err in result.Errors)
-        //        {
-        //            sb.Append(err).Append("\r\n");
-        //        }
-        //        throw new Exception(sb.ToString());
-        //    }
-        //    return result.CompiledAssembly;
-        //}
+            CompilerResults result = complier.CompileAssemblyFromSource(param, codes);
+            if (result.Errors.HasErrors)
+            {
+                StringBuilder sb = new StringBuilder(String.Empty);
+                foreach (object err in result.Errors)
+                {
+                    sb.Append(err).Append("\r\n");
+                }
+                throw new Exception(sb.ToString());
+            }
+            return result.CompiledAssembly;
+        }
     }
 }
