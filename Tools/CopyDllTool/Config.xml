@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<Config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <dllFolderPath>../../Build</dllFolderPath>
+  <itemList>
+    <enabled>true</enabled>
+    <dllName>BaseCore</dllName>
+    <destFolderPathList>../../../ExcelDataExporter/ExcelDataExporter/Plugin</destFolderPathList>
+  </itemList>
+  <itemList>
+    <enabled>true</enabled>
+    <dllName>DataStructure</dllName>
+    <destFolderPathList>../../../ExcelDataExporter/ExcelDataExporter/Plugin</destFolderPathList>
+  </itemList>
+  <itemList>
+    <enabled>true</enabled>
+    <dllName>DataObject</dllName>
+    <destFolderPathList>../../../ExcelDataExporter/ExcelDataExporter/Plugin</destFolderPathList>
+  </itemList>
+  <itemList>
+    <enabled>true</enabled>
+    <dllName>DataExporter</dllName>
+    <destFolderPathList>../../../ExcelDataExporter/ExcelDataExporter/Plugin</destFolderPathList>
+  </itemList>
+</Config>

@@ -1,0 +1,151 @@
+using System;
+
+namespace MonMooseCore
+{
+    public class ProcessBase : ClassPoolObj
+    {
+        private EProcessState m_state;
+        private Timer m_timer;
+
+        public Action<ProcessBase> actionOnEnd;
+
+        public virtual bool canStart { get { return true; } }
+        public EProcessState state { get { return m_state; } }
+
+        public void Init()
+        {
+            OnInit();
+        }
+
+        private void OnTimeUp()
+        {
+            End();
+        }
+
+        public void UnInit()
+        {
+            OnUnInit();
+            this.Release();
+        }
+
+        public void Start()
+        {
+            if (m_state != EProcessState.None)
+            {
+                DebugUtility.LogError("Cannot Start Process state is " + m_state);
+                return;
+            }
+            m_state = EProcessState.Started;
+            OnStart();
+        }
+
+        public void End()
+        {
+            if (m_state != EProcessState.Started)
+            {
+                DebugUtility.LogError("Cannot End Process state is " + m_state);
+                return;
+            }
+            m_state = EProcessState.Ended;
+            OnEnd();
+            if (actionOnEnd != null)
+            {
+                Action<ProcessBase> temp = actionOnEnd;
+                actionOnEnd = null;
+                temp(this);
+            }
+        }
+
+        public void Pause()
+        {
+            if (m_state != EProcessState.Started)
+            {
+                DebugUtility.LogError("Cannot Pause Process state is " + m_state);
+                return;
+            }
+            OnPause();
+        }
+
+        public void Resume()
+        {
+            if (m_state != EProcessState.Paused)
+            {
+                DebugUtility.LogError("Cannot Resume Process state is " + m_state);
+                return;
+            }
+            OnResume();
+        }
+
+        public void Skip()
+        {
+            if (m_state != EProcessState.None)
+            {
+                DebugUtility.LogError("Cannot Skip Process state is " + m_state);
+                return;
+            }
+            m_state = EProcessState.Ended;
+            OnSkip();
+        }
+
+        public void DelayEnd(float time, bool exceptZero = true)
+        {
+            if (time > float.Epsilon || !exceptZero)
+            {
+                if (m_timer == null)
+                {
+                    m_timer = ClassPoolManager.instance.Fetch<Timer>(this);
+                }
+                m_timer.Start(time, OnTimeUp);
+            }
+            else
+            {
+                End();
+            }
+        }
+
+        public void StopDelayEnd(bool callEnd)
+        {
+            if (m_timer == null)
+            {
+                return;
+            }
+            if (callEnd)
+            {
+                m_timer.Finish();
+            }
+            else
+            {
+                m_timer.Stop();
+            }
+        }
+
+        public void Update(float deltaTime)
+        {
+            if (m_timer != null)
+            {
+                m_timer.Tick(deltaTime);
+            }
+            OnUpdate(deltaTime);
+        }
+
+        protected virtual void OnInit() { }
+        protected virtual void OnUnInit() { }
+        protected virtual void OnStart() { }
+        protected virtual void OnEnd() { }
+        protected virtual void OnPause() { }
+        protected virtual void OnResume() { }
+        protected virtual void OnSkip() { }
+        protected virtual void OnUpdate(float deltaTime) { }
+
+        public override void OnRelease()
+        {
+            actionOnEnd = null;
+            m_state = EProcessState.None;
+            if (m_timer != null)
+            {
+                m_timer.Release();
+                m_timer = null;
+            }
+        }
+    }
+}

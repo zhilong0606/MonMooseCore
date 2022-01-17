@@ -19,3 +19,8 @@ Projects/DataObject/*.user
 Projects/DataObject/.vs/
 Projects/DataObject/bin/
 Projects/DataObject/obj/
+
+Tools/CopyDllTool/Project/*.user
+Tools/CopyDllTool/Project/.vs/
+Tools/CopyDllTool/Project/CopyDllTool/bin/
+Tools/CopyDllTool/Project/CopyDllTool/obj/
