@@ -61,6 +61,7 @@ namespace MonMooseCore.Structure
     public abstract class MemberedStructureInfo : StructureInfo
     {
         public sealed override bool isCollection { get { return false; } }
+        public override bool isValid { get { return string.IsNullOrEmpty(name); } }
 
         protected MemberedStructureInfo(string name) : base(name)
         {

@@ -8,6 +8,7 @@
 
         public abstract bool isCollection { get; }
         public abstract EStructureType structureType { get; }
+        public abstract bool isValid { get; }
 
         protected StructureInfo(string name)
         {

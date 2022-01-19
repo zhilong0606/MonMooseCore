@@ -11,7 +11,12 @@
             get { return m_classStructureInfo; }
         }
 
-        public PackStructureInfo(ClassStructureInfo structureInfo) : base(structureInfo.name + "List")
+        public override bool isValid
+        {
+            get { return m_classStructureInfo != null; }
+        }
+
+        public PackStructureInfo(ClassStructureInfo structureInfo) : base(StructureUtility.GetPackStructureName(structureInfo.name))
         {
             m_classStructureInfo = structureInfo;
             ListStructureInfo listStructureInfo = new ListStructureInfo(structureInfo);

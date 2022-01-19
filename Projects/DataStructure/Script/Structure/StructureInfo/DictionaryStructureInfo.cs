@@ -8,6 +8,11 @@
         public StructureInfo keyStructureInfo { get { return m_keyStructureInfo; } }
         public StructureInfo valueStructureInfo { get { return m_valueStructureInfo; } }
 
+        public override bool isValid
+        {
+            get { return m_keyStructureInfo != null && m_valueStructureInfo != null; }
+        }
+
         public sealed override EStructureType structureType { get { return EStructureType.Dictionary; } }
 
         public DictionaryStructureInfo(StructureInfo keyStructureInfo, StructureInfo valueStructureInfo) : base(string.Format("Dictionary<{0},{1}>", keyStructureInfo.name, valueStructureInfo.name))
