@@ -11,5 +11,6 @@ namespace MonMooseCore.DataExporter
         public string loaderExportFolderPath;
         public string usingNamespaceStr;
         public DataObjectManager dataObjManager;
+        public StructureManager structureManager;
     }
 }

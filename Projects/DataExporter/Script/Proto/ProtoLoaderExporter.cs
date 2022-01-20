@@ -1,4 +1,6 @@
-﻿namespace MonMooseCore.DataExporter
+﻿using MonMooseCore.Structure;
+
+namespace MonMooseCore.DataExporter
 {
     public class ProtoLoaderExporter : LoaderExporter
     {
@@ -9,7 +11,7 @@
         private const string m_annotationFormat = "//{0}";
         private const string m_listDefineFormat = "private List<{1}{0}{2}> m_{3}List = new List<{1}{0}{2}>();";
         private const string m_getItemFuncFormat = "public {1}{0}{2} Get{0}(int id) {{ foreach (var info in m_{3}List) if (info.Id == id) return info; return null; }}";
-        private const string m_getEnumIdItemFuncFormat = "public {1}{0}{2} Get{0}(E{0}Id id) {{ foreach (var info in m_{3}List) if (info.Id == (int)id) return info; return null; }}";
+        private const string m_getEnumIdItemFuncFormat = "public {1}{0}{2} Get{0}({4} id) {{ foreach (var info in m_{3}List) if (info.Id == (int)id) return info; return null; }}";
         private const string m_getEnumeratorFuncFormat = "public IEnumerable<{1}{0}{2}> {3}List {{ get {{ return m_{3}List; }} }}";
         private const string m_getItemCountFuncFormat = "public int {0}Count {{ get {{ return m_{0}List.Count; }} }}";
 
@@ -40,10 +42,12 @@
                     foreach (var kv in m_context.dataObjManager.structureMap)
                     {
                         string structureName = kv.Key.name;
-                        m_loaderWriter.AppendLine("");
+                        string enumIdName = StructureUtility.GetEnumIdStructureName(kv.Key.name);
+                        bool isEnumId = m_context.structureManager.HasStructureInfo(enumIdName);
+                        m_loaderWriter.AppendLine();
                         m_loaderWriter.AppendLine(string.Format(m_annotationFormat, structureName));
                         m_loaderWriter.AppendLine(string.Format(m_listDefineFormat, structureName, m_context.prefixStr, m_context.postfixStr, ChangeFirstToLower(structureName)));
-                        m_loaderWriter.AppendLine(string.Format(kv.Key.isEnumId ? m_getEnumIdItemFuncFormat : m_getItemFuncFormat, structureName, m_context.prefixStr, m_context.postfixStr, ChangeFirstToLower(structureName)));
+                        m_loaderWriter.AppendLine(string.Format(isEnumId ? m_getEnumIdItemFuncFormat : m_getItemFuncFormat, structureName, m_context.prefixStr, m_context.postfixStr, ChangeFirstToLower(structureName)));
                         m_loaderWriter.AppendLine(string.Format(m_getEnumeratorFuncFormat, structureName, m_context.prefixStr, m_context.postfixStr, ChangeFirstToLower(structureName)));
                         m_loaderWriter.AppendLine(string.Format(m_getItemCountFuncFormat, ChangeFirstToLower(structureName)));
                     }

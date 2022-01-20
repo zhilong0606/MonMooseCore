@@ -4,8 +4,6 @@ namespace MonMooseCore.Structure
 {
     public class ClassStructureInfo : MemberedStructureInfo<ClassMemberInfo>
     {
-        public bool isEnumId;
-
         public sealed override EStructureType structureType { get { return EStructureType.Class; } }
         
         public ClassStructureInfo(string name) : base(name) { }

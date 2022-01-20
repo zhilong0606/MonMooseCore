@@ -58,5 +58,11 @@ namespace MonMooseCore.Structure
             }
             return null;
         }
+
+        public bool HasStructureInfo(string structureName)
+        {
+            StructureInfo structureInfo;
+            return structureMap.TryGetValue(structureName, out structureInfo);
+        }
     }
 }
