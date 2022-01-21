@@ -125,6 +125,7 @@
     <Compile Include="Script\Trigger\TriggerBase.cs" />
     <Compile Include="Script\Trigger\TriggerConditionBase.cs" />
     <Compile Include="Script\Utility\File\FilePathUtility.cs" />
+    <Compile Include="Script\Utility\File\FileUtility.cs" />
     <Compile Include="Script\Utility\File\FileWriter.cs" />
     <Compile Include="Script\Utility\Type\TypeMethodUtility.cs" />
   </ItemGroup>

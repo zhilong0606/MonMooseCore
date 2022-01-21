@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 
 namespace MonMooseCore
 {
@@ -162,6 +163,47 @@ namespace MonMooseCore
                 position += string.Format("{0}{1}", positions[i], POSITION_DELIMITER);
             }
             return position;
+        }
+
+        public static string NormalizePath(string path)
+        {
+            if (path.Contains('\\'))
+            {
+                return path.Replace('\\', '/');
+            }
+            return path;
+        }
+
+        public static string NormalizeFolderPath(string path)
+        {
+            path = NormalizePath(path);
+            if (path.EndsWith("/"))
+            {
+                return path.TrimEnd('/');
+            }
+            return path;
+        }
+
+        public static string GetPath(string folderPath, params string[] names)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(folderPath);
+            folderPath = NormalizeFolderPath(folderPath);
+            bool isFolderPathEmpty = string.IsNullOrEmpty(folderPath);
+            int count = names.Length;
+            for(int i = 0; i < count; ++i)
+            {
+                string name = NormalizeFolderPath(names[i]);
+                if (!string.IsNullOrEmpty(name))
+                {
+                    if (!isFolderPathEmpty || i != 0)
+                    {
+                        sb.Append("/");
+                    }
+                    sb.Append(name);
+                }
+            }
+            return sb.ToString();
         }
     }
 }
