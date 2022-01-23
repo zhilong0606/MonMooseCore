@@ -1,4 +1,5 @@
-﻿using MonMooseCore.Structure;
+﻿using System.Collections.Generic;
+using MonMooseCore.Structure;
 
 namespace MonMooseCore.DataExporter
 {
@@ -11,5 +12,6 @@ namespace MonMooseCore.DataExporter
         public string ilExportFolderPath;
         public string structureExporterPath;
         public StructureManager structureManager;
+        public List<MemberInfo> ignoreMemberInfoList;
     }
 }

@@ -187,8 +187,8 @@ namespace MonMooseCore
         public static string GetPath(string folderPath, params string[] names)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append(folderPath);
             folderPath = NormalizeFolderPath(folderPath);
+            sb.Append(folderPath);
             bool isFolderPathEmpty = string.IsNullOrEmpty(folderPath);
             int count = names.Length;
             for(int i = 0; i < count; ++i)

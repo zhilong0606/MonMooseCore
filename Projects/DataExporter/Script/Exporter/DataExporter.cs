@@ -1,8 +1,4 @@
 ﻿using System;
-using System.CodeDom.Compiler;
-using System.IO;
-using System.Reflection;
-using System.Text;
 using MonMooseCore.Data;
 using MonMooseCore.Structure;
 
@@ -41,6 +37,8 @@ namespace MonMooseCore.DataExporter
                     return AnalyzeBoolValue(str);
                 case EBasicStructureType.Int32:
                     return AnalyzeIntValue(str);
+                case EBasicStructureType.UInt32:
+                    return AnalyzeUIntValue(str);
                 case EBasicStructureType.Int64:
                     return AnalyzeLongValue(str);
                 case EBasicStructureType.Single:
@@ -68,10 +66,23 @@ namespace MonMooseCore.DataExporter
             {
                 return false;
             }
-            bool value;
-            if (bool.TryParse(str, out value))
+            bool boolValue;
+            if (bool.TryParse(str, out boolValue))
             {
-                return value;
+                return boolValue;
+            }
+            int intValue;
+            if (int.TryParse(str, out intValue))
+            {
+                if (intValue == 0)
+                {
+                    return false;
+                }
+                if (intValue == 1)
+                {
+                    return true;
+                }
+                return true;
             }
             throw new Exception();
         }
@@ -101,6 +112,42 @@ namespace MonMooseCore.DataExporter
             {
                 return value;
             }
+            long longValue;
+            if (long.TryParse(str, out longValue))
+            {
+                return (int)longValue;
+            }
+            float floatValue;
+            if (float.TryParse(str, out floatValue))
+            {
+                return (int)longValue;
+            }
+            //return (int)0;
+            throw new Exception();
+        }
+
+        protected virtual object AnalyzeUIntValue(string str)
+        {
+            if (string.IsNullOrEmpty(str))
+            {
+                return 0;
+            }
+            uint value;
+            if (uint.TryParse(str, out value))
+            {
+                return value;
+            }
+            ulong longValue;
+            if (ulong.TryParse(str, out longValue))
+            {
+                return (uint)longValue;
+            }
+            float floatValue;
+            if (float.TryParse(str, out floatValue))
+            {
+                return (uint)longValue;
+            }
+            //return (uint)0;
             throw new Exception();
         }
 
@@ -155,36 +202,6 @@ namespace MonMooseCore.DataExporter
         protected virtual object AnalyzeDataObject(int id, ClassStructureInfo structureInfo, DataObject dataObj)
         {
             return null;
-        }
-
-        protected Assembly GetCompilerAssembly(string[] codeFiles)
-        {
-            CodeDomProvider complier = CodeDomProvider.CreateProvider("CSharp");
-            CompilerParameters param = new CompilerParameters();
-            param.GenerateExecutable = false;
-            param.GenerateInMemory = true;
-            param.TreatWarningsAsErrors = true;
-            param.IncludeDebugInformation = false;
-            param.ReferencedAssemblies.Add("./Protobuf.dll");
-            param.ReferencedAssemblies.Add("System.dll");
-
-            string[] codes = new string[codeFiles.Length];
-            for (int i = 0; i < codeFiles.Length; ++i)
-            {
-                codes[i] = File.ReadAllText(codeFiles[i], Encoding.UTF8);
-            }
-
-            CompilerResults result = complier.CompileAssemblyFromSource(param, codes);
-            if (result.Errors.HasErrors)
-            {
-                StringBuilder sb = new StringBuilder(String.Empty);
-                foreach (object err in result.Errors)
-                {
-                    sb.Append(err).Append("\r\n");
-                }
-                throw new Exception(sb.ToString());
-            }
-            return result.CompiledAssembly;
         }
     }
 }

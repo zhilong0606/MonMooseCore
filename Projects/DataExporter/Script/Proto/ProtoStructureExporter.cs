@@ -195,8 +195,14 @@ namespace MonMooseCore.DataExporter
                 case EBasicStructureType.Int16:
                 case EBasicStructureType.Int32:
                     return "int32";
+                case EBasicStructureType.UInt8:
+                case EBasicStructureType.UInt16:
+                case EBasicStructureType.UInt32:
+                    return "uint32";
                 case EBasicStructureType.Int64:
                     return "int64";
+                case EBasicStructureType.UInt64:
+                    return "uint64";
                 case EBasicStructureType.Single:
                     return "float";
                 case EBasicStructureType.Double:
@@ -209,14 +215,13 @@ namespace MonMooseCore.DataExporter
 
         private void WriteIlFile()
         {
-            m_ilWriter.WriteFile(m_context.ilExportFolderPath + m_outputName + ".proto");
+            m_ilWriter.WriteFile(FilePathUtility.GetPath(m_context.ilExportFolderPath, m_outputName + ".proto"));
         }
 
         private void RunProtoc()
         {
-            string protoOutputFilePath = m_context.ilExportFolderPath + m_outputName + ".proto";
-            string csOutputFilePath = m_context.structureExportFolderPath + m_outputName + ".cs";
-            string argStr = string.Format("--csharp_out={0} {1}", m_context.structureExportFolderPath, protoOutputFilePath);
+            string protoOutputFilePath = FilePathUtility.GetPath(m_context.ilExportFolderPath, m_outputName + ".proto");
+            string argStr = string.Format("--csharp_out={0} {1} -I {2}", m_context.structureExportFolderPath, protoOutputFilePath, m_context.ilExportFolderPath);
             string errorMsg;
             if (!RunExe(m_context.structureExporterPath, argStr, out errorMsg))
             {

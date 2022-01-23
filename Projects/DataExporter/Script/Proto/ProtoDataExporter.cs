@@ -1,7 +1,9 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using Google.Protobuf;
 using Google.Protobuf.Collections;
 using MonMooseCore.Data;
@@ -13,11 +15,26 @@ namespace MonMooseCore.DataExporter
     {
         private Dictionary<string, DataObjReflectHolder> m_dataObjRefMap = new Dictionary<string, DataObjReflectHolder>();
         private Dictionary<string, ListDataObjReflectHolder> m_listObjRefMap = new Dictionary<string, ListDataObjReflectHolder>();
+        private Assembly m_assembly;
 
         protected override void OnExport()
         {
             int index = 0;
             Dictionary<ClassStructureInfo, Dictionary<int, DataObject>> map = m_context.dataObjManager.structureMap;
+            List<string> codeFilePathList = new List<string>();
+            DirectoryInfo directoryInfo = new DirectoryInfo(m_context.structureExportPath);
+            if (directoryInfo.Exists)
+            {
+                foreach (FileInfo fileInfo in directoryInfo.GetFiles("*.cs"))
+                {
+                    codeFilePathList.Add(fileInfo.FullName);
+                }
+            }
+            m_assembly = GetCompilerAssembly(codeFilePathList.ToArray());
+            if (m_assembly == null)
+            {
+                return;
+            }
             foreach (var kv in map)
             {
                 SendMsg(index, string.Format("正在导出数据:{0} ({1}/{2})", kv.Key.name, index, map.Count));
@@ -42,7 +59,11 @@ namespace MonMooseCore.DataExporter
                 Object obj = AnalyzeDataObject(kv.Key, structureInfo, kv.Value);
                 listAddMethodInfo.Invoke(listMemberObj, new[] {obj});
             }
-            string outputPath = m_context.dataExportFolderPath + structureInfo.name;
+            string outputPath = FilePathUtility.GetPath(m_context.dataExportFolderPath, structureInfo.name);
+            if (!string.IsNullOrEmpty(m_context.dataExportExtensionStr))
+            {
+                outputPath = outputPath + "." + m_context.dataExportExtensionStr;
+            }
             using (MemoryStream ms = new MemoryStream())
             {
                 using (CodedOutputStream cos = new CodedOutputStream(ms))
@@ -56,15 +77,6 @@ namespace MonMooseCore.DataExporter
                         fs.Close();
                     }
                 }
-            }
-            if (!string.IsNullOrEmpty(m_context.dataExportFolderPath) && Directory.Exists(m_context.dataExportFolderPath))
-            {
-                string destPath = m_context.dataExportFolderPath + structureInfo.name;
-                if (!string.IsNullOrEmpty(m_context.dataExportExtensionStr))
-                {
-                    destPath = destPath + "." + m_context.dataExportExtensionStr;
-                }
-                File.Copy(outputPath, destPath, true);
             }
         }
 
@@ -124,7 +136,7 @@ namespace MonMooseCore.DataExporter
         {
             object obj = AnalyzeDataObject(structureInfo, dataObj);
             Type valueType = GetType(structureInfo);
-            FieldInfo fieldInfo = valueType.GetField("id_", BindingFlags.NonPublic | BindingFlags.Instance);
+            FieldInfo fieldInfo = valueType.GetField("iD_", BindingFlags.NonPublic | BindingFlags.Instance);
             fieldInfo.SetValue(obj, id);
             return obj;
         }
@@ -134,7 +146,7 @@ namespace MonMooseCore.DataExporter
             switch (structureInfo.structureType)
             {
                 case EStructureType.Basic:
-                    return "System." + (structureInfo as BasicStructureInfo).name;
+                    return "System." + (structureInfo as BasicStructureInfo).exportName;
                 case EStructureType.Class:
                 {
                     string str = string.Empty;
@@ -188,8 +200,38 @@ namespace MonMooseCore.DataExporter
             {
                 return Type.GetType(typeName);
             }
-            return null;
-            //return m_context.assembly.GetType(typeName);
+            return m_assembly.GetType(typeName);
+        }
+
+        protected Assembly GetCompilerAssembly(string[] codeFiles)
+        {
+            CodeDomProvider complier = CodeDomProvider.CreateProvider("CSharp");
+            CompilerParameters param = new CompilerParameters();
+            param.GenerateExecutable = false;
+            param.GenerateInMemory = true;
+            param.TreatWarningsAsErrors = true;
+            param.IncludeDebugInformation = false;
+            param.ReferencedAssemblies.Add(m_context.dataExportDllPath);
+            param.ReferencedAssemblies.Add("System.dll");
+            param.ReferencedAssemblies.Add("System.Core.dll");
+
+            string[] codes = new string[codeFiles.Length];
+            for (int i = 0; i < codeFiles.Length; ++i)
+            {
+                codes[i] = File.ReadAllText(codeFiles[i], Encoding.UTF8);
+            }
+
+            CompilerResults result = complier.CompileAssemblyFromSource(param, codes);
+            if (result.Errors.HasErrors)
+            {
+                StringBuilder sb = new StringBuilder(String.Empty);
+                foreach (object err in result.Errors)
+                {
+                    sb.Append(err).Append("\r\n");
+                }
+                throw new Exception(sb.ToString());
+            }
+            return result.CompiledAssembly;
         }
 
         public class DataObjReflectHolder
