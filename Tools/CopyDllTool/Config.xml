@@ -3,7 +3,7 @@
   <dllFolderPath>../../Build</dllFolderPath>
   <itemList>
     <enabled>true</enabled>
-    <dllName>BaseCore</dllName>
+    <dllName>MonMooseCore</dllName>
     <destFolderPathList>../../../ExcelDataExporter/ExcelDataExporter/Plugin</destFolderPathList>
   </itemList>
   <itemList>
@@ -18,7 +18,17 @@
   </itemList>
   <itemList>
     <enabled>true</enabled>
-    <dllName>DataExporter</dllName>
+    <dllName>DataStructureExporter</dllName>
+    <destFolderPathList>../../../ExcelDataExporter/ExcelDataExporter/Plugin</destFolderPathList>
+  </itemList>
+  <itemList>
+    <enabled>true</enabled>
+    <dllName>DataObjectExporter</dllName>
+    <destFolderPathList>../../../ExcelDataExporter/ExcelDataExporter/Plugin</destFolderPathList>
+  </itemList>
+  <itemList>
+    <enabled>true</enabled>
+    <dllName>DataLoaderExporter</dllName>
     <destFolderPathList>../../../ExcelDataExporter/ExcelDataExporter/Plugin</destFolderPathList>
   </itemList>
 </Config>
