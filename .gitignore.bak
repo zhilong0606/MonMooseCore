@@ -25,10 +25,10 @@ Projects/DataObjectExporter/.vs/
 Projects/DataObjectExporter/bin/
 Projects/DataObjectExporter/obj/
 
-Projects/DataStructureExporter/*.user
-Projects/DataStructureExporter/.vs/
-Projects/DataStructureExporter/bin/
-Projects/DataStructureExporter/obj/
+Projects/DataExporter/*.user
+Projects/DataExporter/.vs/
+Projects/DataExporter/bin/
+Projects/DataExporter/obj/
 
 Tools/CopyDllTool/Project/*.user
 Tools/CopyDllTool/Project/.vs/
