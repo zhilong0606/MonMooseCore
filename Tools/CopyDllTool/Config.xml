@@ -5,11 +5,13 @@
     <enabled>true</enabled>
     <dllName>MonMooseCore</dllName>
     <destFolderPathList>../../../ExcelDataExporter/ExcelDataExporter/Plugin</destFolderPathList>
+    <destFolderPathList>../../../DramaGraph/DramaGraph/Assets/Plugins/MonMoose</destFolderPathList>
   </itemList>
   <itemList>
     <enabled>true</enabled>
     <dllName>DataStructure</dllName>
     <destFolderPathList>../../../ExcelDataExporter/ExcelDataExporter/Plugin</destFolderPathList>
+    <destFolderPathList>../../../DramaGraph/DramaGraph/Assets/Plugins/MonMoose</destFolderPathList>
   </itemList>
   <itemList>
     <enabled>true</enabled>
@@ -20,6 +22,7 @@
     <enabled>true</enabled>
     <dllName>DataStructureExporter</dllName>
     <destFolderPathList>../../../ExcelDataExporter/ExcelDataExporter/Plugin</destFolderPathList>
+    <destFolderPathList>../../../DramaGraph/DramaGraph/Assets/Plugins/MonMoose</destFolderPathList>
   </itemList>
   <itemList>
     <enabled>true</enabled>

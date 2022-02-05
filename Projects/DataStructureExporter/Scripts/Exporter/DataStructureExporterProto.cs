@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 using MonMooseCore.Structure;
 
 namespace MonMooseCore.DataExporter
@@ -10,22 +11,72 @@ namespace MonMooseCore.DataExporter
         private List<EnumStructureInfo> m_enumList = new List<EnumStructureInfo>();
         private List<ClassStructureInfo> m_classList = new List<ClassStructureInfo>();
         private List<ListStructureInfo> m_listList = new List<ListStructureInfo>();
-        private List<DictionaryStructureInfo> m_dictionaryList = new List<DictionaryStructureInfo>();
         private List<PackStructureInfo> m_packList = new List<PackStructureInfo>();
+        private List<DictionaryStructureInfo> m_dictionaryList = new List<DictionaryStructureInfo>();
 
-        private FileWriter m_ilWriter = new FileWriter();
-
-        private const string m_outputName = "Structure";
+        private Dictionary<string, DataStructureExportGroup> m_exportGroupMap = new Dictionary<string, DataStructureExportGroup>();
+        private Dictionary<string, WriterGroup> m_ilWriterGroupMap = new Dictionary<string, WriterGroup>();
+        private List<string> m_ilPathList = new List<string>();
 
         protected override void OnExport()
         {
             CollectStructureLists();
-            ExportHead();
-            ExportEnum();
-            ExportClass();
-            ExportPack();
+            //if (m_context.exportGroupList.Count == 0)
+            //{
+            //    DataStructureExportGroup exportGroup = new DataStructureExportGroup();
+            //    exportGroup.name = m_context.singleFileExportGroupName;
+            //    AddStructureNameToList(exportGroup.structureNameList, m_enumList);
+            //    AddStructureNameToList(exportGroup.structureNameList, m_classList);
+            //    AddStructureNameToList(exportGroup.structureNameList, m_packList);
+            //    m_context.exportGroupList.Add(exportGroup);
+            //}
+            if (m_context.exportGroupList.Count == 0)
+            {
+                foreach (var sss in m_enumList)
+                {
+                    DataStructureExportGroup exportGroup = new DataStructureExportGroup();
+                    exportGroup.name = sss.name;
+                    exportGroup.structureNameList.Add(sss.name);
+                    m_context.exportGroupList.Add(exportGroup);
+                }
+                foreach (var sss in m_classList)
+                {
+                    DataStructureExportGroup exportGroup = new DataStructureExportGroup();
+                    exportGroup.name = sss.name;
+                    exportGroup.structureNameList.Add(sss.name);
+                    m_context.exportGroupList.Add(exportGroup);
+                }
+                foreach (var sss in m_packList)
+                {
+                    DataStructureExportGroup exportGroup = new DataStructureExportGroup();
+                    exportGroup.name = sss.name;
+                    exportGroup.structureNameList.Add(sss.name);
+                    m_context.exportGroupList.Add(exportGroup);
+                }
+            }
+            CollectExportGroupMap();
+            foreach (DataStructureExportGroup exportGroup in m_context.exportGroupList)
+            {
+                WriterGroup writerGroup = GetWriterGroup(exportGroup);
+                ExportHead(writerGroup);
+                ExportStructureList(exportGroup, m_enumList, writerGroup, ExportEnum);
+                ExportStructureList(exportGroup, m_classList, writerGroup, ExportClass);
+                ExportStructureList(exportGroup, m_packList, writerGroup, ExportPack);
+            }
             WriteIlFile();
             RunProtoc();
+        }
+
+        private void CollectExportGroupMap()
+        {
+            for (int i = 0; i < m_context.exportGroupList.Count; ++i)
+            {
+                DataStructureExportGroup exportGroup = m_context.exportGroupList[i];
+                for (int j = 0; j < exportGroup.structureNameList.Count; ++j)
+                {
+                    m_exportGroupMap.Add(exportGroup.structureNameList[j], exportGroup);
+                }
+            }
         }
 
         private void CollectStructureLists()
@@ -59,115 +110,165 @@ namespace MonMooseCore.DataExporter
             }
         }
 
-        private void ExportHead()
+        private void ExportStructureList<T>(DataStructureExportGroup exportGroup, List<T> targetStructureList, WriterGroup writerGroup, Action<T, WriterGroup> actionOnExport) where T : StructureInfo
         {
-            m_ilWriter.AppendLine("syntax = \"proto3\";");
+            foreach (string structureName in exportGroup.structureNameList)
+            {
+                T structureInfo = GetStructureInfo(structureName, targetStructureList);
+                if (structureInfo != null)
+                {
+                    actionOnExport(structureInfo, writerGroup);
+                }
+            }
+        }
+
+        private WriterGroup GetWriterGroup(DataStructureExportGroup exportGroup)
+        {
+            WriterGroup group;
+            if(!m_ilWriterGroupMap.TryGetValue(exportGroup.name, out group))
+            {
+                group = new WriterGroup(exportGroup);
+                m_ilWriterGroupMap.Add(exportGroup.name, group);
+            }
+            return group;
+        }
+
+        private void ExportHead(WriterGroup writerGroup)
+        {
+            FileWriter ilWriter = writerGroup.writer;
+            ilWriter.AppendLine("syntax = \"proto3\";");
+            writerGroup.CreateAndInsertBlockItem();
             if (!string.IsNullOrEmpty(m_context.namespaceStr))
             {
-                m_ilWriter.AppendLine(string.Format("package {0};", m_context.namespaceStr));
+                ilWriter.AppendLine(string.Format("package {0};", m_context.namespaceStr));
             }
         }
 
-        private void ExportEnum()
+        private void ExportEnum(EnumStructureInfo structureInfo, WriterGroup writerGroup)
         {
-            for (int i = 0; i < m_enumList.Count; ++i)
+            FileWriter ilWriter = writerGroup.writer;
+            ilWriter.AppendLine();
+            ilWriter.AppendLine("enum {0}", GetExportName(structureInfo));
+            ilWriter.StartBlock();
             {
-                EnumStructureInfo enumInfo = m_enumList[i];
-                SendMsg((double) i / (m_enumList.Count + m_classList.Count), string.Format("正在导出枚举:{0} ({1}/{2})", enumInfo.name, i, m_enumList.Count));
-                m_ilWriter.AppendLine();
-                m_ilWriter.StartLine("enum").AppendSpace().Append(GetExportName(enumInfo)).EndLine();
-                m_ilWriter.StartCodeBlock();
+                foreach (EnumMemberInfo memberInfo in structureInfo.memberList)
                 {
-                    foreach (EnumMemberInfo memberInfo in enumInfo.memberList)
-                    {
-                        m_ilWriter.StartLine(enumInfo.name).Append("_").Append(memberInfo.name).Append(" = ").Append(memberInfo.index.ToString()).Append(";").EndLine();
-                    }
+                    ilWriter.AppendLine("{0}_{1} = {2};", structureInfo.name, memberInfo.name, memberInfo.index);
                 }
-                m_ilWriter.EndCodeBlock();
+            }
+            ilWriter.EndBlock();
+        }
+
+        private void ExportClass(ClassStructureInfo structureInfo, WriterGroup writerGroup)
+        {
+            FileWriter ilWriter = writerGroup.writer;
+            ilWriter.AppendLine();
+            ilWriter.AppendLine("message {0}", GetExportName(structureInfo));
+            ilWriter.StartBlock();
+            {
+                for (int i = 0; i < structureInfo.memberList.Count; ++i)
+                {
+                    ClassMemberInfo memberInfo = structureInfo.memberList[i];
+                    ilWriter.StartLine();
+                    StructureInfo memberStructureInfo = memberInfo.structureInfo;
+                    switch (memberStructureInfo.structureType)
+                    {
+                        case EStructureType.Basic:
+                            ilWriter.Append(GetExportName(memberStructureInfo));
+                            break;
+                        case EStructureType.Enum:
+                        case EStructureType.Class:
+                            ilWriter.Append(GetExportName(memberStructureInfo));
+                            writerGroup.AddImportGroup(GetExportGroup(memberStructureInfo.name));
+                            break;
+                        case EStructureType.List:
+                            ListStructureInfo memberListInfo = memberStructureInfo as ListStructureInfo;
+                            if (!memberListInfo.valueStructureInfo.isCollection)
+                            {
+                                ilWriter.Append("repeated {0}", GetExportName(memberListInfo.valueStructureInfo));
+                            }
+                            else
+                            {
+                                throw new Exception(string.Format("类型不能同时拥有多个组合，类型名：{0}，成员名：{1}, 成员类型名：{2}", structureInfo.name, memberInfo.name, memberStructureInfo.name));
+                            }
+                            writerGroup.AddImportGroup(GetExportGroup(memberListInfo.valueStructureInfo.name));
+                            break;
+                        case EStructureType.Dictionary:
+                            DictionaryStructureInfo memberDictionaryInfo = memberStructureInfo as DictionaryStructureInfo;
+                            if (!memberDictionaryInfo.keyStructureInfo.isCollection && !memberDictionaryInfo.valueStructureInfo.isCollection)
+                            {
+                                ilWriter.Append("map<{0},{1}>", GetExportName(memberDictionaryInfo.keyStructureInfo), GetExportName(memberDictionaryInfo.valueStructureInfo));
+                            }
+                            else
+                            {
+                                throw new Exception(string.Format("类型不能同时拥有多个组合，类型名：{0}，成员名：{1}, 成员类型名：{2}", structureInfo.name, memberInfo.name, memberStructureInfo.name));
+                            }
+                            writerGroup.AddImportGroup(GetExportGroup(memberDictionaryInfo.keyStructureInfo.name));
+                            writerGroup.AddImportGroup(GetExportGroup(memberDictionaryInfo.valueStructureInfo.name));
+                            break;
+                        default:
+                            throw new Exception("");
+                    }
+                    ilWriter.Append(" {0} = {1};", memberInfo.name, i + 1);
+                    ilWriter.EndLine();
+                }
+            }
+            ilWriter.EndBlock();
+        }
+
+        private void ExportPack(PackStructureInfo structureInfo, WriterGroup writerGroup)
+        {
+            FileWriter ilWriter = writerGroup.writer;
+            ilWriter.AppendLine();
+            ilWriter.AppendLine("message {0}", GetExportName(structureInfo));
+            ilWriter.StartBlock();
+            {
+                for (int i = 0; i < structureInfo.memberList.Count; ++i)
+                {
+                    ClassMemberInfo memberInfo = structureInfo.memberList[i];
+                    StructureInfo memberStructureInfo = memberInfo.structureInfo;
+                    ListStructureInfo memberListInfo = memberStructureInfo as ListStructureInfo;
+                    if (memberListInfo.valueStructureInfo.isCollection)
+                    {
+                        throw new Exception(string.Format("类型不能同时拥有多个组合，类型名：{0}，成员名：{1}, 成员类型名：{2}", structureInfo.name, memberInfo.name, memberStructureInfo.name));
+                    }
+                    ilWriter.AppendLine("repeated {0} {1} = {2};", GetExportName(memberListInfo.valueStructureInfo), memberInfo.name, i + 1);
+                    writerGroup.AddImportGroup(GetExportGroup(memberListInfo.valueStructureInfo.name));
+                }
+            }
+            ilWriter.EndBlock();
+        }
+
+        private T GetStructureInfo<T>(string name, List<T> list) where T : StructureInfo
+        {
+            foreach (T structureInfo in list)
+            {
+                if (structureInfo.name == name)
+                {
+                    return structureInfo;
+                }
+            }
+            return null;
+        }
+
+        private void AddStructureNameToList<T>(List<string> structureNameList, List<T> structureList) where T : StructureInfo
+        {
+            int count = structureList.Count;
+            for (int i = 0; i < count; ++i)
+            {
+                string structureName = structureList[i].name;
+                if (!structureNameList.Contains(structureName))
+                {
+                    structureNameList.Add(structureName);
+                }
             }
         }
 
-        private void ExportClass()
+        private DataStructureExportGroup GetExportGroup(string structureName)
         {
-            for (int i = 0; i < m_classList.Count; ++i)
-            {
-                ClassStructureInfo classInfo = m_classList[i];
-                SendMsg((double) (i + m_enumList.Count) / (m_enumList.Count + m_classList.Count), string.Format("正在导出类型:{0} ({1}/{2})", classInfo.name, i, m_classList.Count));
-                m_ilWriter.AppendLine();
-                m_ilWriter.StartLine("message").AppendSpace().Append(GetExportName(classInfo)).EndLine();
-                m_ilWriter.StartCodeBlock();
-                {
-                    for (int j = 0; j < classInfo.memberList.Count; ++j)
-                    {
-                        ClassMemberInfo memberInfo = classInfo.memberList[j];
-                        m_ilWriter.StartLine();
-                        StructureInfo memberStructureInfo = memberInfo.structureInfo;
-                        switch (memberStructureInfo.structureType)
-                        {
-                            case EStructureType.Basic:
-                            case EStructureType.Enum:
-                            case EStructureType.Class:
-                                m_ilWriter.Append(GetExportName(memberStructureInfo));
-                                break;
-                            case EStructureType.List:
-                                ListStructureInfo memberListInfo = memberStructureInfo as ListStructureInfo;
-                                if (!memberListInfo.valueStructureInfo.isCollection)
-                                {
-                                    m_ilWriter.Append("repeated").AppendSpace().Append(GetExportName(memberListInfo.valueStructureInfo));
-                                }
-                                else
-                                {
-                                    throw new Exception(string.Format("类型不能同时拥有多个组合，类型名：{0}，成员名：{1}, 成员类型名：{2}", classInfo.name, memberInfo.name, memberStructureInfo.name));
-                                }
-                                break;
-                            case EStructureType.Dictionary:
-                                DictionaryStructureInfo memberDictionaryInfo = memberStructureInfo as DictionaryStructureInfo;
-                                if (!memberDictionaryInfo.keyStructureInfo.isCollection && !memberDictionaryInfo.valueStructureInfo.isCollection)
-                                {
-                                    m_ilWriter.Append("map").Append("<").Append(GetExportName(memberDictionaryInfo.keyStructureInfo)).Append(",").Append(GetExportName(memberDictionaryInfo.valueStructureInfo)).Append(">");
-                                }
-                                else
-                                {
-                                    throw new Exception(string.Format("类型不能同时拥有多个组合，类型名：{0}，成员名：{1}, 成员类型名：{2}", classInfo.name, memberInfo.name, memberStructureInfo.name));
-                                }
-                                break;
-                            default:
-                                throw new Exception("");
-                        }
-                        m_ilWriter.AppendSpace().Append(memberInfo.name).Append(" = ").Append((j + 1).ToString());
-                        m_ilWriter.Append(";").EndLine();
-                    }
-                }
-                m_ilWriter.EndCodeBlock();
-            }
-        }
-
-        private void ExportPack()
-        {
-            for (int i = 0; i < m_packList.Count; ++i)
-            {
-                PackStructureInfo packInfo = m_packList[i];
-                SendMsg((double) (i + m_enumList.Count) / (m_enumList.Count + m_classList.Count), string.Format("正在导出类型:{0} ({1}/{2})", packInfo.name, i, m_classList.Count));
-                m_ilWriter.AppendLine();
-                m_ilWriter.StartLine("message").AppendSpace().Append(GetExportName(packInfo)).EndLine();
-                m_ilWriter.StartCodeBlock();
-                {
-                    for (int j = 0; j < packInfo.memberList.Count; ++j)
-                    {
-                        ClassMemberInfo memberInfo = packInfo.memberList[j];
-                        m_ilWriter.StartLine();
-                        StructureInfo memberStructureInfo = memberInfo.structureInfo;
-                        ListStructureInfo memberListInfo = memberStructureInfo as ListStructureInfo;
-                        if (!memberListInfo.valueStructureInfo.isCollection)
-                        {
-                            m_ilWriter.Append("repeated").AppendSpace().Append(GetExportName(memberListInfo.valueStructureInfo));
-                        }
-                        m_ilWriter.AppendSpace().Append(memberInfo.name).Append(" = ").Append((j + 1).ToString());
-                        m_ilWriter.Append(";").EndLine();
-                    }
-                }
-                m_ilWriter.EndCodeBlock();
-            }
+            DataStructureExportGroup exportGroup;
+            m_exportGroupMap.TryGetValue(structureName, out exportGroup);
+            return exportGroup;
         }
 
         protected override string GetExportName(StructureInfo structureInfo)
@@ -215,17 +316,39 @@ namespace MonMooseCore.DataExporter
 
         private void WriteIlFile()
         {
-            m_ilWriter.WriteFile(FilePathUtility.GetPath(m_context.ilExportFolderPath, m_outputName + ".proto"));
+            foreach (var kv in m_ilWriterGroupMap)
+            {
+                string ilPath = FilePathUtility.GetPath(m_context.ilExportFolderPath, kv.Value.exportGroup.name + ".proto");
+                kv.Value.WriteImportBlock();
+                kv.Value.writer.WriteFile(ilPath);
+                m_ilPathList.Add(ilPath);
+            }
         }
 
         private void RunProtoc()
         {
-            string protoOutputFilePath = FilePathUtility.GetPath(m_context.ilExportFolderPath, m_outputName + ".proto");
-            string argStr = string.Format("--csharp_out={0} {1} -I {2}", m_context.structureExportFolderPath, protoOutputFilePath, m_context.ilExportFolderPath);
-            string errorMsg;
-            if (!RunExe(m_context.structureExporterPath, argStr, out errorMsg))
+            StringBuilder sb = new StringBuilder();
+            int index = 0;
+            for (int i = 0; i < m_ilPathList.Count; ++i)
             {
-                throw new Exception(errorMsg);
+                index++;
+                string ilPath = m_ilPathList[i];
+                if (i != 0)
+                {
+                    sb.Append(" ");
+                }
+                sb.Append(ilPath);
+                if (sb.Length > (1<<15) - 1000 || i == m_ilPathList.Count -1)
+                {
+                    string argStr = string.Format("--proto_path={2} --csharp_out={0} {1}", m_context.structureExportFolderPath, sb, m_context.ilExportFolderPath);
+                    string errorMsg;
+                    if (!RunExe(m_context.structureExporterPath, argStr, out errorMsg))
+                    {
+                        throw new Exception(errorMsg);
+                    }
+                    index = 0;
+                    sb = new StringBuilder();
+                }
             }
         }
 
@@ -262,7 +385,7 @@ namespace MonMooseCore.DataExporter
             }
             catch (Exception e)
             {
-                int a = 0;
+                errorMsg = e.Message;
             }
             finally
             {
@@ -272,6 +395,48 @@ namespace MonMooseCore.DataExporter
                 }
             }
             return result;
+        }
+
+        private class WriterGroup
+        {
+            public FileWriter writer = new FileWriter();
+            public FileWriterBlockItemBlock importBlockWriter;
+            public DataStructureExportGroup exportGroup;
+            public List<DataStructureExportGroup> importExportGroupList = new List<DataStructureExportGroup>();
+
+            public WriterGroup(DataStructureExportGroup exportGroup)
+            {
+                this.exportGroup = exportGroup;
+            }
+
+            public void CreateAndInsertBlockItem()
+            {
+                importBlockWriter = writer.CreateAndInsertBlockItem();
+            }
+
+            public void WriteImportBlock()
+            {
+                for (int i = 0; i < importExportGroupList.Count; ++i)
+                {
+                    importBlockWriter.AppendLine("import \"{0}.proto\";", importExportGroupList[i].name);
+                }
+            }
+
+            public void AddImportGroup(DataStructureExportGroup group)
+            {
+                if (group == null)
+                {
+                    return;
+                }
+                if (group == exportGroup)
+                {
+                    return;
+                }
+                if (!importExportGroupList.Contains(group))
+                {
+                    importExportGroupList.Add(group);
+                }
+            }
         }
     }
 }

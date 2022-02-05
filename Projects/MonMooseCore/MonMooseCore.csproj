@@ -126,8 +126,13 @@
     <Compile Include="Script\Trigger\TriggerConditionBase.cs" />
     <Compile Include="Script\Utility\File\FilePathUtility.cs" />
     <Compile Include="Script\Utility\File\FileUtility.cs" />
-    <Compile Include="Script\Utility\File\FileWriter.cs" />
+    <Compile Include="Script\Utility\File\Writer\FileWriter.cs" />
+    <Compile Include="Script\Utility\File\Writer\FileWriterBlockItem.cs" />
+    <Compile Include="Script\Utility\File\Writer\FileWriterBlockItemBlock.cs" />
+    <Compile Include="Script\Utility\File\Writer\FileWriterBlockItemLineString.cs" />
+    <Compile Include="Script\Utility\File\Writer\FileWriterBlockItemLineStringBuilder.cs" />
     <Compile Include="Script\Utility\Type\TypeMethodUtility.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

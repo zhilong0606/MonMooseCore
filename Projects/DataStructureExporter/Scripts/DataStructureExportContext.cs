@@ -11,6 +11,8 @@ namespace MonMooseCore.DataExporter
         public string structureExportFolderPath;
         public string ilExportFolderPath;
         public string structureExporterPath;
+        public string singleFileExportGroupName = "Structure";
+        public List<DataStructureExportGroup> exportGroupList = new List<DataStructureExportGroup>();
         public StructureManager structureManager;
         public List<MemberInfo> ignoreMemberInfoList;
     }

@@ -10,7 +10,7 @@ namespace CopyDllTool
     class Program
     {
         private const string m_dllFormat = "{0}/{1}.dll";
-        private const string m_pbdFormat = "{0}/{1}.pbd";
+        private const string m_pdbFormat = "{0}/{1}.pdb";
 
         static void Main(string[] args)
         {
@@ -26,7 +26,7 @@ namespace CopyDllTool
                         continue;
                     }
                     ExecuteCopy(m_dllFormat, item.dllName, config.dllFolderPath, item.destFolderPathList);
-                    ExecuteCopy(m_pbdFormat, item.dllName, config.dllFolderPath, item.destFolderPathList);
+                    ExecuteCopy(m_pdbFormat, item.dllName, config.dllFolderPath, item.destFolderPathList);
                 }
             }
         }
