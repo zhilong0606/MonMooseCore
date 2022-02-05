@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -12,20 +12,6 @@ namespace MonMooseCore
         private string m_name;
         private StopwatchTreeNode m_parent;
         private List<StopwatchTreeNode> m_childList = new List<StopwatchTreeNode>();
-
-        private const string m_tabStr = "  ";
-        private const string m_foldStr = "┣ ";
-        private const string m_foldLastStr = "┗ ";
-        private const string m_foldLinkStr = "┃ ";
-        //ffff
-        //  ┣ dddd
-        //  ┃   ┣ eeee
-        //  ┃   ┃   ┗ rrrrr
-        //  ┃   ┗ mmmmm
-        //  ┣ ewww
-        //  ┗ dffff
-        //       ┣ ddddd
-        //       ┗ ggggg
 
         public StopwatchTreeNode parent
         {
@@ -43,6 +29,7 @@ namespace MonMooseCore
             {
                 return;
             }
+            child.m_parent = this;
             m_childList.Add(child);
         }
 
@@ -58,29 +45,35 @@ namespace MonMooseCore
 
         public void LogOut(StringBuilder sb, List<string> markList)
         {
-            for (int i = 0; i < markList.Count; ++i)
+            for (int i = 0; i < markList.Count - 1; ++i)
             {
-                sb.Append(m_tabStr);
+                sb.Append(StopwatchMark.tabStr);
                 sb.Append(markList[i]);
             }
             if (m_parent != null)
             {
-                sb.Append(m_tabStr);
-                sb.Append(m_foldStr);
+                sb.Append(StopwatchMark.tabStr);
+                if (m_parent.m_childList.IndexOf(this) == m_parent.m_childList.Count - 1)
+                {
+                    sb.Append(StopwatchMark.foldLastStr);
+                }
+                else
+                {
+                    sb.Append(StopwatchMark.foldStr);
+                }
             }
-            sb.Append("(").Append(m_stopwatch.ElapsedMilliseconds / 1000f).Append(")").Append(" ").Append(m_name).Append("\r\n");
-            //sb.Append(string.Format("({0}) {1}\r\n", (m_stopwatch.ElapsedMilliseconds / 1000f),ToString(), m_name));
+            sb.Append(string.Format("({0:N2}) {1}\r\n", m_stopwatch.ElapsedMilliseconds / 1000f, m_name));
             for (int i = 0; i < m_childList.Count; ++i)
             {
                 List<string> list = new List<string>(markList);
                 StopwatchTreeNode child = m_childList[i];
                 if (i == m_childList.Count - 1)
                 {
-                    list.Add(m_foldLastStr);
+                    list.Add(StopwatchMark.tabStr);
                 }
                 else
                 {
-                    list.Add(m_foldLinkStr);
+                    list.Add(StopwatchMark.foldLinkStr);
                 }
                 child.LogOut(sb, list);
             }

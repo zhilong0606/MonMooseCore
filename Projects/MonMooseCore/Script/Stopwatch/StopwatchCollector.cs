@@ -45,7 +45,7 @@ namespace MonMooseCore
             }
             using (StreamWriter file = new StreamWriter(path, false, Encoding.UTF8))
             {
-                file.Write(ToString());
+                file.Write(sb.ToString());
             }
         }
     }

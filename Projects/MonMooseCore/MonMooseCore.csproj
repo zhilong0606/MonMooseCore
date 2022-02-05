@@ -114,6 +114,7 @@
     <Compile Include="Script\StateMachine\StateContext.cs" />
     <Compile Include="Script\StateMachine\StateMachine.cs" />
     <Compile Include="Script\Stopwatch\StopwatchCollector.cs" />
+    <Compile Include="Script\Stopwatch\StopwatchMark.cs" />
     <Compile Include="Script\Stopwatch\StopwatchTreeNode.cs" />
     <Compile Include="Script\Structure\ListenedValue.cs" />
     <Compile Include="Script\Task\Task.cs" />
