@@ -32,29 +32,32 @@ namespace MonMooseCore.DataExporter
             //}
             if (m_context.exportGroupList.Count == 0)
             {
-                foreach (var sss in m_enumList)
+                m_context.stopwatchCollector.Start("InitDefaultExportGroup");
+                foreach (var structureInfo in m_enumList)
                 {
                     DataStructureExportGroup exportGroup = new DataStructureExportGroup();
-                    exportGroup.name = sss.name;
-                    exportGroup.structureNameList.Add(sss.name);
+                    exportGroup.name = structureInfo.name;
+                    exportGroup.structureNameList.Add(structureInfo.name);
                     m_context.exportGroupList.Add(exportGroup);
                 }
-                foreach (var sss in m_classList)
+                foreach (var structureInfo in m_classList)
                 {
                     DataStructureExportGroup exportGroup = new DataStructureExportGroup();
-                    exportGroup.name = sss.name;
-                    exportGroup.structureNameList.Add(sss.name);
+                    exportGroup.name = structureInfo.name;
+                    exportGroup.structureNameList.Add(structureInfo.name);
                     m_context.exportGroupList.Add(exportGroup);
                 }
-                foreach (var sss in m_packList)
+                foreach (var structureInfo in m_packList)
                 {
                     DataStructureExportGroup exportGroup = new DataStructureExportGroup();
-                    exportGroup.name = sss.name;
-                    exportGroup.structureNameList.Add(sss.name);
+                    exportGroup.name = structureInfo.name;
+                    exportGroup.structureNameList.Add(structureInfo.name);
                     m_context.exportGroupList.Add(exportGroup);
                 }
+                m_context.stopwatchCollector.Stop();
             }
             CollectExportGroupMap();
+            m_context.stopwatchCollector.Start("ExportStructure");
             foreach (DataStructureExportGroup exportGroup in m_context.exportGroupList)
             {
                 WriterGroup writerGroup = GetWriterGroup(exportGroup);
@@ -63,12 +66,14 @@ namespace MonMooseCore.DataExporter
                 ExportStructureList(exportGroup, m_classList, writerGroup, ExportClass);
                 ExportStructureList(exportGroup, m_packList, writerGroup, ExportPack);
             }
+            m_context.stopwatchCollector.Stop();
             WriteIlFile();
             RunProtoc();
         }
 
         private void CollectExportGroupMap()
         {
+            m_context.stopwatchCollector.Start("CollectExportGroupMap");
             for (int i = 0; i < m_context.exportGroupList.Count; ++i)
             {
                 DataStructureExportGroup exportGroup = m_context.exportGroupList[i];
@@ -77,6 +82,7 @@ namespace MonMooseCore.DataExporter
                     m_exportGroupMap.Add(exportGroup.structureNameList[j], exportGroup);
                 }
             }
+            m_context.stopwatchCollector.Stop();
         }
 
         private void CollectStructureLists()
@@ -316,6 +322,7 @@ namespace MonMooseCore.DataExporter
 
         private void WriteIlFile()
         {
+            m_context.stopwatchCollector.Start("WriteIlFile");
             foreach (var kv in m_ilWriterGroupMap)
             {
                 string ilPath = FilePathUtility.GetPath(m_context.ilExportFolderPath, kv.Value.exportGroup.name + ".proto");
@@ -323,10 +330,12 @@ namespace MonMooseCore.DataExporter
                 kv.Value.writer.WriteFile(ilPath);
                 m_ilPathList.Add(ilPath);
             }
+            m_context.stopwatchCollector.Stop();
         }
 
         private void RunProtoc()
         {
+            m_context.stopwatchCollector.Start("RunProtoc");
             StringBuilder sb = new StringBuilder();
             int index = 0;
             for (int i = 0; i < m_ilPathList.Count; ++i)
@@ -350,6 +359,7 @@ namespace MonMooseCore.DataExporter
                     sb = new StringBuilder();
                 }
             }
+            m_context.stopwatchCollector.Stop();
         }
 
         private bool RunExe(string fileName, string argument, out string errorMsg)

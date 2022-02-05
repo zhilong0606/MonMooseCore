@@ -13,12 +13,20 @@ namespace MonMooseCore
 
         public void Start(string name)
         {
-            StopwatchTreeNode newNode = new StopwatchTreeNode(name);
+            StopwatchTreeNode node = null;
             if (m_curNode != null)
             {
-                m_curNode.AddChild(newNode);
+                node = m_curNode.FindChild(name);
             }
-            m_curNode = newNode;
+            if (node == null)
+            {
+                node = new StopwatchTreeNode(name);
+                if (m_curNode != null)
+                {
+                    m_curNode.AddChild(node);
+                }
+            }
+            m_curNode = node;
             m_curNode.Start();
         }
 

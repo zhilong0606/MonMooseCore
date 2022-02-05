@@ -33,6 +33,18 @@ namespace MonMooseCore
             m_childList.Add(child);
         }
 
+        public StopwatchTreeNode FindChild(string name)
+        {
+            foreach (StopwatchTreeNode child in m_childList)
+            {
+                if (child.m_name == name)
+                {
+                    return child;
+                }
+            }
+            return null;
+        }
+
         public void Start()
         {
             m_stopwatch.Start();
