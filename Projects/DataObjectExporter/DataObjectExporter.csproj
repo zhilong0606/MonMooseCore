@@ -31,6 +31,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MonMooseCore, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\ExcelDataExporter\ExcelDataExporter\Plugin\MonMooseCore.dll</HintPath>
+    </Reference>
     <Reference Include="Protobuf">
       <HintPath>..\Plugin\Protobuf.dll</HintPath>
     </Reference>
@@ -57,10 +61,6 @@
     <ProjectReference Include="..\DataStructure\DataStructure.csproj">
       <Project>{ad26b1d9-9894-491d-ae85-418950e0d512}</Project>
       <Name>DataStructure</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\MonMooseCore\MonMooseCore.csproj">
-      <Project>{5b25e8cb-33e8-4cd0-a3f6-3a8e802efb1d}</Project>
-      <Name>MonMooseCore</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

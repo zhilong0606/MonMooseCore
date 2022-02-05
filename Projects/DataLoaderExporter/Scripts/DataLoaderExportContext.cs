@@ -1,4 +1,5 @@
-﻿using MonMooseCore.Data;
+﻿using MonMooseCore;
+using MonMooseCore.Data;
 using MonMooseCore.Structure;
 
 namespace MonMooseCore.DataExporter
@@ -10,6 +11,7 @@ namespace MonMooseCore.DataExporter
         public string postfixStr;
         public string loaderExportFolderPath;
         public string usingNamespaceStr;
+        public StopwatchCollector stopwatchCollector;
         public DataObjectManager dataObjManager;
         public StructureManager structureManager;
     }
