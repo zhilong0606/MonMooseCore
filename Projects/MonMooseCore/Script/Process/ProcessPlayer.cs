@@ -66,7 +66,7 @@ namespace MonMooseCore
             m_curProcess = null;
             StartNext();
         }
-        
+
         public void Clear()
         {
             for (int i = 0; i < m_processList.Count; ++i)

@@ -6,7 +6,7 @@ namespace MonMooseCore
     {
         private int m_cmdTypeCount;
         private List<FrameCut> m_frameCutList = new List<FrameCut>(64);
-        
+
         public void Init()
         {
 

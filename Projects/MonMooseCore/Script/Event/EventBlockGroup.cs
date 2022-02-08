@@ -21,7 +21,7 @@ namespace MonMooseCore
                     }
                     m_isBlocked = value;
                 }
-                
+
             }
         }
 

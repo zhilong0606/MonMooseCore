@@ -15,12 +15,14 @@ namespace MonMooseCore.DataExporter
     {
         private Dictionary<string, DataObjReflectHolder> m_dataObjRefMap = new Dictionary<string, DataObjReflectHolder>();
         private Dictionary<string, ListDataObjReflectHolder> m_listObjRefMap = new Dictionary<string, ListDataObjReflectHolder>();
+        private Dictionary<string, FieldInfo> m_idFieldMap = new Dictionary<string, FieldInfo>();
         private Assembly m_assembly;
+        private object m_dataObjRefMapLock = new object();
+        private object m_listObjRefMapLock = new object();
+        private object m_idFieldMapLock = new object();
 
         protected override void OnExport()
         {
-            int index = 0;
-            Dictionary<ClassStructureInfo, Dictionary<int, DataObject>> map = m_context.dataObjManager.structureMap;
             List<string> codeFilePathList = new List<string>();
             DirectoryInfo directoryInfo = new DirectoryInfo(m_context.structureExportPath);
             if (directoryInfo.Exists)
@@ -35,12 +37,38 @@ namespace MonMooseCore.DataExporter
             {
                 return;
             }
+            if (m_context.useMultiTask)
+            {
+                ExportDataAsync();
+            }
+            else
+            {
+                ExportDataSync();
+            }
+        }
+
+        private void ExportDataSync()
+        {
+            int index = 0;
+            Dictionary<ClassStructureInfo, Dictionary<int, DataObject>> map = m_context.dataObjManager.structureMap;
             foreach (var kv in map)
             {
-                SendMsg(index, string.Format("正在导出数据:{0} ({1}/{2})", kv.Key.name, index, map.Count));
+                SendMsg((double)index / map.Count, string.Format("正在导出数据:{0} ({1}/{2})", kv.Key.name, index, map.Count));
                 ExportData(kv.Key, kv.Value);
                 index++;
             }
+        }
+
+        private void ExportDataAsync()
+        {
+            List<System.Threading.Tasks.Task> taskList = new List<System.Threading.Tasks.Task>();
+            Dictionary<ClassStructureInfo, Dictionary<int, DataObject>> map = m_context.dataObjManager.structureMap;
+            foreach (var kv in map)
+            {
+                var task = System.Threading.Tasks.Task.Run(() => ExportData(kv.Key, kv.Value));
+                taskList.Add(task);
+            }
+            System.Threading.Tasks.Task.WaitAll(taskList.ToArray());
         }
 
         private void ExportData(ClassStructureInfo structureInfo, Dictionary<int, DataObject> map)
@@ -83,13 +111,20 @@ namespace MonMooseCore.DataExporter
         protected override object AnalyzeListValue(ListStructureInfo structureInfo, ListDataValue dataValue)
         {
             ListDataObjReflectHolder refHolder;
-            if (!m_listObjRefMap.TryGetValue(structureInfo.name, out refHolder))
+            lock (m_listObjRefMapLock)
+            {
+                m_listObjRefMap.TryGetValue(structureInfo.name, out refHolder);
+            }
+            if (refHolder == null)
             {
                 refHolder = new ListDataObjReflectHolder();
                 refHolder.itemType = GetType(structureInfo.valueStructureInfo);
                 refHolder.listType = typeof(RepeatedField<>).MakeGenericType(refHolder.itemType);
-                refHolder.addMethodInfo = refHolder.listType.GetMethod("Add", new[] {refHolder.itemType}, new[] {new ParameterModifier(1)});
-                m_listObjRefMap.Add(structureInfo.name, refHolder);
+                refHolder.addMethodInfo = refHolder.listType.GetMethod("Add", new[] { refHolder.itemType }, new[] { new ParameterModifier(1) });
+            }
+            lock (m_listObjRefMapLock)
+            {
+                m_listObjRefMap[structureInfo.name] = refHolder;
             }
             Object obj = Activator.CreateInstance(refHolder.listType);
             foreach (DataValue value in dataValue.valueList)
@@ -103,7 +138,11 @@ namespace MonMooseCore.DataExporter
         protected override object AnalyzeDataObject(ClassStructureInfo structureInfo, DataObject dataObj)
         {
             DataObjReflectHolder refHolder;
-            if (!m_dataObjRefMap.TryGetValue(structureInfo.name, out refHolder))
+            lock (m_dataObjRefMapLock)
+            {
+                m_dataObjRefMap.TryGetValue(structureInfo.name, out refHolder);
+            }
+            if (refHolder == null)
             {
                 refHolder = new DataObjReflectHolder();
                 refHolder.valueType = GetType(structureInfo);
@@ -115,7 +154,10 @@ namespace MonMooseCore.DataExporter
                         refHolder.fieldInfoMap.Add(fieldName, fieldInfo);
                     }
                 }
-                m_dataObjRefMap.Add(structureInfo.name, refHolder);
+            }
+            lock (m_dataObjRefMapLock)
+            {
+                m_dataObjRefMap[structureInfo.name] = refHolder;
             }
             Object obj = Activator.CreateInstance(refHolder.valueType);
             foreach (DataField field in dataObj.fieldList)
@@ -135,9 +177,21 @@ namespace MonMooseCore.DataExporter
         protected override object AnalyzeDataObject(int id, ClassStructureInfo structureInfo, DataObject dataObj)
         {
             object obj = AnalyzeDataObject(structureInfo, dataObj);
-            Type valueType = GetType(structureInfo);
-            FieldInfo fieldInfo = valueType.GetField("iD_", BindingFlags.NonPublic | BindingFlags.Instance);
-            fieldInfo.SetValue(obj, id);
+            FieldInfo idField;
+            lock (m_idFieldMapLock)
+            {
+                m_idFieldMap.TryGetValue(structureInfo.name, out idField);
+            }
+            if (idField == null)
+            {
+                Type valueType = GetType(structureInfo);
+                idField = valueType.GetField("iD_", BindingFlags.NonPublic | BindingFlags.Instance);
+            }
+            lock (m_idFieldMapLock)
+            {
+                m_idFieldMap[structureInfo.name] = idField;
+            }
+            idField.SetValue(obj, id);
             return obj;
         }
 

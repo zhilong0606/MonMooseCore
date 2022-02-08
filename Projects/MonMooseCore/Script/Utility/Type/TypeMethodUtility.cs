@@ -34,10 +34,10 @@ namespace MonMooseCore
         static TypeMethodUtility()
         {
             MethodHolder<byte> byteMethodHolder = new MethodHolder<byte>();
-            byteMethodHolder.Add = (a, b) => (byte) (a + b);
-            byteMethodHolder.Minus = (a, b) => (byte) (a - b);
-            byteMethodHolder.Multiply = (a, b) => (byte) (a * b);
-            byteMethodHolder.Divide = (a, b) => (byte) (a / b);
+            byteMethodHolder.Add = (a, b) => (byte)(a + b);
+            byteMethodHolder.Minus = (a, b) => (byte)(a - b);
+            byteMethodHolder.Multiply = (a, b) => (byte)(a * b);
+            byteMethodHolder.Divide = (a, b) => (byte)(a / b);
             byteMethodHolder.CheckEqual = (a, b) => a == b;
             byteMethodHolder.TryParse = byte.TryParse;
             AddMethodHolder(byteMethodHolder);
@@ -52,10 +52,10 @@ namespace MonMooseCore
             AddMethodHolder(sbyteMethodHolder);
 
             MethodHolder<short> shortMethodHolder = new MethodHolder<short>();
-            shortMethodHolder.Add = (a, b) => (short) (a + b);
-            shortMethodHolder.Minus = (a, b) => (short) (a - b);
-            shortMethodHolder.Multiply = (a, b) => (short) (a * b);
-            shortMethodHolder.Divide = (a, b) => (short) (a / b);
+            shortMethodHolder.Add = (a, b) => (short)(a + b);
+            shortMethodHolder.Minus = (a, b) => (short)(a - b);
+            shortMethodHolder.Multiply = (a, b) => (short)(a * b);
+            shortMethodHolder.Divide = (a, b) => (short)(a / b);
             shortMethodHolder.CheckEqual = (a, b) => a == b;
             shortMethodHolder.TryParse = short.TryParse;
             AddMethodHolder(shortMethodHolder);

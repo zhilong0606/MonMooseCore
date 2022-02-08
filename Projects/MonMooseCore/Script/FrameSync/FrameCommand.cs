@@ -6,7 +6,7 @@ namespace MonMooseCore
     {
         private Action<FrameCommand> m_actionOnExecute;
 
-        public abstract int typeId { get; } 
+        public abstract int typeId { get; }
 
         protected void Excute()
         {

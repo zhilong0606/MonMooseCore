@@ -65,7 +65,7 @@ namespace MonMooseCore
 
         protected virtual void OnTick(float deltaTime)
         {
-            
+
         }
 
         public enum EState

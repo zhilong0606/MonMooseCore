@@ -158,7 +158,7 @@ namespace MonMooseCore
                 actionOnFinish(this);
             }
         }
-        
+
         protected override void CalcValueAndSendTick()
         {
             m_preValue = m_curValue;
@@ -185,7 +185,7 @@ namespace MonMooseCore
                 }
             }
         }
-        
+
         protected abstract T Lerp(T start, T end, float f);
     }
 }

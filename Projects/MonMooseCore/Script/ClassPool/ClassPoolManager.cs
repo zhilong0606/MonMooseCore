@@ -6,7 +6,7 @@ namespace MonMooseCore
     public class ClassPoolManager : Singleton<ClassPoolManager>
     {
         private readonly Dictionary<Type, ClassPool> m_poolMap = new Dictionary<Type, ClassPool>();
-        
+
         //尽量填causer，static类的话填Type，其他填this
         public T Fetch<T>(object causer) where T : class
         {

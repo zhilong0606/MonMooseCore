@@ -51,7 +51,7 @@ namespace MonMooseCore
         private T m_preValue;
         private T m_curValue;
         private Func<T, T, bool> m_equalFunc = EqualDefault;
-        
+
         private bool m_isValueChanged = false;
 
         public DelegateValueChanged actionOnValueChanged;
@@ -77,7 +77,7 @@ namespace MonMooseCore
         }
 
         public ListenedValue()
-            :this(default(T))
+            : this(default(T))
         {
         }
 
