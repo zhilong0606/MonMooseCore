@@ -23,16 +23,11 @@ namespace MonMooseCore.DataExporter
 
         protected override void OnExport()
         {
-            List<string> codeFilePathList = new List<string>();
-            DirectoryInfo directoryInfo = new DirectoryInfo(m_context.structureExportPath);
-            if (directoryInfo.Exists)
+            if (m_context.codeFilePathList == null || m_context.codeFilePathList.Count == 0)
             {
-                foreach (FileInfo fileInfo in directoryInfo.GetFiles("*.cs"))
-                {
-                    codeFilePathList.Add(fileInfo.FullName);
-                }
+                return;
             }
-            m_assembly = GetCompilerAssembly(codeFilePathList.ToArray());
+            m_assembly = GetCompilerAssembly(m_context.codeFilePathList.ToArray());
             if (m_assembly == null)
             {
                 return;

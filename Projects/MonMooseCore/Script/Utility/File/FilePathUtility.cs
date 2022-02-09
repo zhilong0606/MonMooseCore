@@ -11,13 +11,13 @@ namespace MonMooseCore
         private const char m_dotChar = '.';
         private const string m_dotStr = ".";
 
-        private const char m_unNormalizedSlashChar = '\\';
-        private const string m_unNormalizedSlashStr = "\\";
+        private const char m_rightDownSlashChar = '\\';
+        private const string m_rightDownSlashStr = "\\";
 
-        private const char m_normalizedSlashChar = '/';
-        private const string m_normalizedSlashStr = "/";
+        private const char m_rightUpSlashChar = '/';
+        private const string m_rightUpSlashStr = "/";
 
-        public static string GetFileNameWithoutExtensions(string name)
+        public static string GetFileNameWithoutExtension(string name)
         {
             if (!string.IsNullOrEmpty(name))
             {
@@ -35,8 +35,7 @@ namespace MonMooseCore
         {
             if (!string.IsNullOrEmpty(name))
             {
-                name = NormalizePath(name);
-                int slashIndex = name.LastIndexOf(m_normalizedSlashChar);
+                int slashIndex = Math.Max(name.LastIndexOf(m_rightUpSlashChar), name.LastIndexOf(m_rightDownSlashChar));
                 if (slashIndex >= 0)
                 {
                     return name.Substring(slashIndex, name.Length - slashIndex);
@@ -47,24 +46,30 @@ namespace MonMooseCore
 
         public static bool TryGetAbsolutePath(string relativePath, out string absolutePath)
         {
+            return TryGetAbsolutePath(EFilePathSlashType.RightUp, relativePath, out absolutePath);
+        }
+
+        public static bool TryGetAbsolutePath(EFilePathSlashType slashType, string relativePath, out string absolutePath)
+        {
             absolutePath = string.Empty;
             if (string.IsNullOrEmpty(relativePath) || relativePath[0] != m_dotChar)
             {
                 return false;
             }
-            relativePath = NormalizePath(relativePath);
-            string curFolderPath = NormalizeFolderPath(Directory.GetCurrentDirectory());
+            relativePath = NormalizeFolderPath(slashType, relativePath);
+            string curFolderPath = NormalizeFolderPath(slashType, Directory.GetCurrentDirectory());
             if (string.IsNullOrEmpty(curFolderPath) || curFolderPath[0] == m_dotChar)
             {
                 return false;
             }
-            string[] curFolderNames = curFolderPath.Split(m_normalizedSlashChar);
+            char slashChar = GetFilePathSlashChar(slashType);
+            string[] curFolderNames = curFolderPath.Split(slashChar);
             if (curFolderNames.Length == 0)
             {
                 return false;
             }
             int startRelativeIndex = 0;
-            string[] relativePathSplits = relativePath.Split(m_normalizedSlashChar);
+            string[] relativePathSplits = relativePath.Split(slashChar);
             if (relativePathSplits.Length > 0 && relativePathSplits[0] == m_dotStr)
             {
                 startRelativeIndex++;
@@ -91,7 +96,7 @@ namespace MonMooseCore
             for (int i = 0; i < curFolderNames.Length - needRelativeDepth; i++)
             {
                 sb.Append(curFolderNames[i]);
-                sb.Append(m_normalizedSlashChar);
+                sb.Append(slashChar);
             }
             for (int i = endRelativeIndex + 1; i < relativePathSplits.Length; i++)
             {
@@ -101,7 +106,7 @@ namespace MonMooseCore
                     sb.Append(relativePathSplits[i]);
                     if (i < relativePathSplits.Length - 1)
                     {
-                        sb.Append(m_normalizedSlashChar);
+                        sb.Append(slashChar);
                     }
                 }
             }
@@ -111,23 +116,29 @@ namespace MonMooseCore
 
         public static bool TryGetRelativePath(string absolutePath, out string relativePath)
         {
+            return TryGetRelativePath(EFilePathSlashType.RightUp, absolutePath, out relativePath);
+        }
+
+        public static bool TryGetRelativePath(EFilePathSlashType slashType, string absolutePath, out string relativePath)
+        {
             relativePath = string.Empty;
             if (string.IsNullOrEmpty(absolutePath) || absolutePath[0] == m_dotChar)
             {
                 return false;
             }
-            absolutePath = NormalizePath(absolutePath);
-            string curFolderPath = NormalizeFolderPath(Directory.GetCurrentDirectory());
+            absolutePath = NormalizeFolderPath(slashType, absolutePath);
+            string curFolderPath = NormalizeFolderPath(slashType, Directory.GetCurrentDirectory());
             if (string.IsNullOrEmpty(curFolderPath) || curFolderPath[0] == m_dotChar)
             {
                 return false;
             }
-            string[] curFolderNames = curFolderPath.Split(m_normalizedSlashChar);
+            char slashChar = GetFilePathSlashChar(slashType);
+            string[] curFolderNames = curFolderPath.Split(slashChar);
             if (curFolderNames.Length == 0)
             {
                 return false;
             }
-            string[] absolutePathSplits = absolutePath.Split(m_normalizedSlashChar);
+            string[] absolutePathSplits = absolutePath.Split(slashChar);
             if (absolutePathSplits.Length == 0)
             {
                 return false;
@@ -148,69 +159,119 @@ namespace MonMooseCore
             }
             StringBuilder sb = new StringBuilder();
             sb.Append(m_dotChar);
-            sb.Append(m_normalizedSlashChar);
+            sb.Append(slashChar);
             for (int i = startIndex; i < curFolderNames.Length; ++i)
             {
                 sb.Append(m_doubleDotStr);
                 if (i < curFolderNames.Length - 1)
                 {
-                    sb.Append(m_normalizedSlashChar);
+                    sb.Append(slashChar);
                 }
             }
             for (int i = startIndex; i < absolutePathSplits.Length; ++i)
             {
-                sb.Append(m_normalizedSlashChar);
+                sb.Append(slashChar);
                 sb.Append(absolutePathSplits[i]);
             }
             relativePath = sb.ToString();
             return true;
         }
 
-        public static string NormalizePath(string path)
-        {
-            if (!string.IsNullOrEmpty(path))
-            {
-                if (path.Contains(m_unNormalizedSlashChar))
-                {
-                    return path.Replace(m_unNormalizedSlashChar, m_normalizedSlashChar);
-                }
-            }
-            return path;
-        }
-
-        public static string NormalizeFolderPath(string path)
-        {
-            if (!string.IsNullOrEmpty(path))
-            {
-                path = NormalizePath(path);
-                if (path.EndsWith(m_normalizedSlashStr))
-                {
-                    return path.TrimEnd(m_normalizedSlashChar);
-                }
-            }
-            return path;
-        }
-
         public static string GetPath(string folderPath, params string[] names)
         {
+            return GetPath(EFilePathSlashType.RightUp, folderPath, names);
+        }
+
+        public static string GetPath(EFilePathSlashType slashType, string folderPath, params string[] names)
+        {
             StringBuilder sb = new StringBuilder();
-            folderPath = NormalizeFolderPath(folderPath);
+            folderPath = NormalizeFolderPath(slashType, folderPath);
             sb.Append(folderPath);
             bool isFolderPathEmpty = string.IsNullOrEmpty(folderPath);
             int count = names.Length;
+            char slashChar = GetFilePathSlashChar(slashType);
             for (int i = 0; i < count; ++i)
             {
-                string name = NormalizeFolderPath(names[i]);
+                string name = NormalizeFolderPath(slashType, names[i]);
                 if (!string.IsNullOrEmpty(name))
                 {
                     if (!isFolderPathEmpty || i != 0)
                     {
-                        sb.Append(m_normalizedSlashStr);
+                        sb.Append(slashChar);
                     }
                     sb.Append(name);
                 }
             }
             return sb.ToString();
         }
+
+        private static string NormalizePath(EFilePathSlashType slashType, string path)
+        {
+            if (!string.IsNullOrEmpty(path))
+            {
+                char otherSlashChar = GetFilePathSlashChar(GetOtherSlashType(slashType));
+                if (path.Contains(otherSlashChar))
+                {
+                    return path.Replace(otherSlashChar, GetFilePathSlashChar(slashType));
+                }
+            }
+            return path;
+        }
+
+        private static string NormalizeFolderPath(EFilePathSlashType slashType, string path)
+        {
+            if (!string.IsNullOrEmpty(path))
+            {
+                path = NormalizePath(slashType, path);
+
+                if (path.EndsWith(GetFilePathSlashStr(slashType)))
+                {
+                    return path.TrimEnd(GetFilePathSlashChar(slashType));
+                }
+            }
+            return path;
+        }
+
+        private static string GetFilePathSlashStr(EFilePathSlashType slashType)
+        {
+            switch (slashType)
+            {
+                case EFilePathSlashType.RightDown:
+                    return m_rightDownSlashStr;
+                case EFilePathSlashType.RightUp:
+                    return m_rightUpSlashStr;
+            }
+            return string.Empty;
+        }
+
+        private static char GetFilePathSlashChar(EFilePathSlashType slashType)
+        {
+            switch (slashType)
+            {
+                case EFilePathSlashType.RightDown:
+                    return m_rightDownSlashChar;
+                case EFilePathSlashType.RightUp:
+                    return m_rightUpSlashChar;
+            }
+            return '\0';
+        }
+
+        private static EFilePathSlashType GetOtherSlashType(EFilePathSlashType slashType)
+        {
+            switch (slashType)
+            {
+                case EFilePathSlashType.RightDown:
+                    return EFilePathSlashType.RightUp;
+                case EFilePathSlashType.RightUp:
+                    return EFilePathSlashType.RightDown;
+            }
+            throw new Exception();
+        }
+    }
+
+    public enum EFilePathSlashType
+    {
+        RightUp,
+        RightDown,
     }
 }

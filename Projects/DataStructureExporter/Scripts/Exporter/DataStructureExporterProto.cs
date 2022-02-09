@@ -326,6 +326,7 @@ namespace MonMooseCore.DataExporter
             foreach (var kv in m_ilWriterGroupMap)
             {
                 string ilPath = FilePathUtility.GetPath(m_context.ilExportFolderPath, kv.Value.exportGroup.name + ".proto");
+                m_context.codeFilePathList.Add(FilePathUtility.GetPath(m_context.structureExportFolderPath, kv.Value.exportGroup.name + ".cs"));
                 kv.Value.WriteImportBlock();
                 kv.Value.writer.WriteFile(ilPath);
                 m_ilPathList.Add(ilPath);
@@ -342,7 +343,7 @@ namespace MonMooseCore.DataExporter
             {
                 index++;
                 string ilPath = m_ilPathList[i];
-                if (i != 0)
+                if (index != 0)
                 {
                     sb.Append(" ");
                 }

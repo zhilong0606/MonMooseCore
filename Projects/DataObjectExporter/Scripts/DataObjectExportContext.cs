@@ -1,4 +1,5 @@
-﻿using MonMooseCore.Data;
+﻿using System.Collections.Generic;
+using MonMooseCore.Data;
 using MonMooseCore.Structure;
 
 namespace MonMooseCore.DataExporter
@@ -13,6 +14,7 @@ namespace MonMooseCore.DataExporter
         public string dataExportExtensionStr;
         public string dataExportDllPath;
         public string idName;
+        public List<string> codeFilePathList;
         public bool useMultiTask;
         public StopwatchCollector stopwatchCollector;
         public StructureManager structureManager;

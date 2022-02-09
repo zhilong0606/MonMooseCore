@@ -16,5 +16,6 @@ namespace MonMooseCore.DataExporter
         public StopwatchCollector stopwatchCollector;
         public StructureManager structureManager;
         public List<MemberInfo> ignoreMemberInfoList;
+        public List<string> codeFilePathList;
     }
 }
