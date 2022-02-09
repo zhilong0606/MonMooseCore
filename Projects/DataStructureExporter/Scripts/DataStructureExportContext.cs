@@ -15,7 +15,8 @@ namespace MonMooseCore.DataExporter
         public List<DataStructureExportGroup> exportGroupList = new List<DataStructureExportGroup>();
         public StopwatchCollector stopwatchCollector;
         public StructureManager structureManager;
-        public List<MemberInfo> ignoreMemberInfoList;
-        public List<string> codeFilePathList;
+        public List<MemberInfo> ignoreMemberInfoList = new List<MemberInfo>();
+        public List<string> ignoreStructureNameList = new List<string>();
+        public List<string> codeFilePathList = new List<string>();
     }
 }

@@ -60,6 +60,10 @@ namespace MonMooseCore.DataExporter
             m_context.stopwatchCollector.Start("ExportStructure");
             foreach (DataStructureExportGroup exportGroup in m_context.exportGroupList)
             {
+                if (!HasAnyStructureNeedExport(exportGroup, m_context.ignoreStructureNameList))
+                {
+                    continue;
+                }
                 WriterGroup writerGroup = GetWriterGroup(exportGroup);
                 ExportHead(writerGroup);
                 ExportStructureList(exportGroup, m_enumList, writerGroup, ExportEnum);
@@ -120,6 +124,10 @@ namespace MonMooseCore.DataExporter
         {
             foreach (string structureName in exportGroup.structureNameList)
             {
+                if (m_context.ignoreStructureNameList.Contains(structureName))
+                {
+                    continue;
+                }
                 T structureInfo = GetStructureInfo(structureName, targetStructureList);
                 if (structureInfo != null)
                 {
@@ -406,6 +414,18 @@ namespace MonMooseCore.DataExporter
                 }
             }
             return result;
+        }
+
+        private bool HasAnyStructureNeedExport(DataStructureExportGroup exportGroup, List<string> ignoreStructureNameList)
+        {
+            for (int i = 0; i < exportGroup.structureNameList.Count; ++i)
+            {
+                if (!ignoreStructureNameList.Contains(exportGroup.structureNameList[i]))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         private class WriterGroup
