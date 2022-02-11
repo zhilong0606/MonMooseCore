@@ -60,153 +60,34 @@ namespace MonMooseCore.DataExporter
 
         protected object AnalyzeBasicValue(BasicStructureInfo structureInfo, BasicDataValue dataValue)
         {
-            string str = dataValue.value;
             switch (structureInfo.basicStructureType)
             {
                 case EBasicStructureType.Bool:
-                    return AnalyzeBoolValue(str);
+                    return (dataValue as BoolDataValue).value;
+                case EBasicStructureType.Int8:
+                    return (dataValue as Int8DataValue).value;
+                case EBasicStructureType.UInt8:
+                    return (dataValue as UInt8DataValue).value;
+                case EBasicStructureType.Int16:
+                    return (dataValue as Int16DataValue).value;
+                case EBasicStructureType.UInt16:
+                    return (dataValue as UInt16DataValue).value;
                 case EBasicStructureType.Int32:
-                    return AnalyzeIntValue(str);
+                    return (dataValue as Int32DataValue).value;
                 case EBasicStructureType.UInt32:
-                    return AnalyzeUIntValue(str);
+                    return (dataValue as UInt32DataValue).value;
                 case EBasicStructureType.Int64:
-                    return AnalyzeLongValue(str);
+                    return (dataValue as Int64DataValue).value;
+                case EBasicStructureType.UInt64:
+                    return (dataValue as UInt64DataValue).value;
                 case EBasicStructureType.Single:
-                    return AnalyzeFloatValue(str);
+                    return (dataValue as SingleDataValue).value;
                 case EBasicStructureType.Double:
-                    return AnalyzeDoubleValue(str);
+                    return (dataValue as DoubleDataValue).value;
                 case EBasicStructureType.String:
-                    return AnalyzeStringValue(str);
+                    return (dataValue as StringDataValue).value;
             }
             throw new Exception("");
-        }
-
-        protected virtual object AnalyzeStringValue(string str)
-        {
-            if (str == null)
-            {
-                str = string.Empty;
-            }
-            return str;
-        }
-
-        protected virtual bool AnalyzeBoolValue(string str)
-        {
-            if (string.IsNullOrEmpty(str))
-            {
-                return false;
-            }
-            bool boolValue;
-            if (bool.TryParse(str, out boolValue))
-            {
-                return boolValue;
-            }
-            int intValue;
-            if (int.TryParse(str, out intValue))
-            {
-                if (intValue == 0)
-                {
-                    return false;
-                }
-                if (intValue == 1)
-                {
-                    return true;
-                }
-                return true;
-            }
-            throw new Exception();
-        }
-
-        protected virtual object AnalyzeLongValue(string str)
-        {
-            if (string.IsNullOrEmpty(str))
-            {
-                return 0L;
-            }
-            long value;
-            if (long.TryParse(str, out value))
-            {
-                return value;
-            }
-            throw new Exception();
-        }
-
-        protected virtual object AnalyzeIntValue(string str)
-        {
-            if (string.IsNullOrEmpty(str))
-            {
-                return 0;
-            }
-            int value;
-            if (int.TryParse(str, out value))
-            {
-                return value;
-            }
-            long longValue;
-            if (long.TryParse(str, out longValue))
-            {
-                return (int)longValue;
-            }
-            float floatValue;
-            if (float.TryParse(str, out floatValue))
-            {
-                return (int)longValue;
-            }
-            //return (int)0;
-            throw new Exception();
-        }
-
-        protected virtual object AnalyzeUIntValue(string str)
-        {
-            if (string.IsNullOrEmpty(str))
-            {
-                return 0;
-            }
-            uint value;
-            if (uint.TryParse(str, out value))
-            {
-                return value;
-            }
-            ulong longValue;
-            if (ulong.TryParse(str, out longValue))
-            {
-                return (uint)longValue;
-            }
-            float floatValue;
-            if (float.TryParse(str, out floatValue))
-            {
-                return (uint)longValue;
-            }
-            //return (uint)0;
-            throw new Exception();
-        }
-
-        protected virtual object AnalyzeDoubleValue(string str)
-        {
-            if (string.IsNullOrEmpty(str))
-            {
-                return 0d;
-            }
-            double value;
-            if (double.TryParse(str, out value))
-            {
-                return value;
-            }
-            throw new Exception();
-        }
-
-        protected virtual object AnalyzeFloatValue(string str)
-        {
-            if (string.IsNullOrEmpty(str))
-            {
-                return 0f;
-            }
-            float value;
-            if (float.TryParse(str, out value))
-            {
-                return value;
-            }
-            throw new Exception();
         }
 
         protected virtual object AnalyzeEnumValue(EnumStructureInfo structureInfo, EnumDataValue dataValue)

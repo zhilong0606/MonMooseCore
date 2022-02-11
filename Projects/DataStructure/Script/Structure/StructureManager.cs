@@ -61,6 +61,10 @@ namespace MonMooseCore.Structure
 
         public StructureInfo GetStructureInfo(string structureName)
         {
+            if (string.IsNullOrEmpty(structureName))
+            {
+                return null;
+            }
             StructureInfo structureInfo;
             if (structureMap.TryGetValue(structureName.ToLower(), out structureInfo))
             {

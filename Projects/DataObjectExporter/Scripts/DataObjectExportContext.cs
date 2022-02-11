@@ -14,7 +14,7 @@ namespace MonMooseCore.DataExporter
         public string dataExportExtensionStr;
         public string dataExportDllPath;
         public string idName;
-        public List<string> codeFilePathList;
+        public List<string> codeFilePathList = new List<string>();
         public bool useMultiTask;
         public StopwatchCollector stopwatchCollector;
         public StructureManager structureManager;
