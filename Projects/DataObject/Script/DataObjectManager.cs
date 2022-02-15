@@ -30,7 +30,7 @@ namespace MonMooseCore.Data
             }
             if (map.ContainsKey(id))
             {
-                throw new Exception(string.Format("存在相同的Id，类型名：{0}，Id：{1}", structureInfo.name, id));
+                throw new DataObjectIdException(DataObjectIdException.EErrorId.SameDataObjectId, structureInfo.name, id);
             }
             map.Add(id, obj);
         }

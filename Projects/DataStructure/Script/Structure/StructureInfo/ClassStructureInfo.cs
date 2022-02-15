@@ -15,7 +15,7 @@ namespace MonMooseCore.Structure
             {
                 if (memberInfo.structureInfo != structureInfo)
                 {
-                    throw new Exception(string.Format("相同类成员名，类型名：{0}，成员名：{1}", name, memberName));
+                    throw new DataStructureMemberException(DataStructureMemberException.EErrorId.SameMemberName, name, memberName);
                 }
                 return false;
             }

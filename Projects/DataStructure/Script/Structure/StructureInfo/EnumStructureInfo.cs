@@ -17,7 +17,7 @@ namespace MonMooseCore.Structure
             {
                 if (memberInfo.index != memberIndex)
                 {
-                    throw new Exception(string.Format("相同枚举名，类型名：{0}，枚举名：{1}", name, memberName));
+                    throw new DataStructureMemberException(DataStructureMemberException.EErrorId.SameMemberName, name, memberName);
                 }
                 return false;
             }
@@ -26,7 +26,7 @@ namespace MonMooseCore.Structure
             {
                 if (memberInfo.name != memberName)
                 {
-                    throw new Exception(string.Format("相同枚举序号，类型名：{0}，序号：{1}", name, memberIndex));
+                    throw new DataStructureMemberException(DataStructureMemberException.EErrorId.SameEnumMemberIndex, name, memberName);
                 }
                 return false;
             }

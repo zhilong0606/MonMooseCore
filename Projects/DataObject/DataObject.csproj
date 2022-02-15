@@ -59,6 +59,7 @@
     <Compile Include="Script\DataObjectManager.cs" />
     <Compile Include="Script\DataValue.cs" />
     <Compile Include="Script\EnumDataValue.cs" />
+    <Compile Include="Script\Exception\DataObjectIdException.cs" />
     <Compile Include="Script\ListDataValue.cs" />
   </ItemGroup>
   <ItemGroup>

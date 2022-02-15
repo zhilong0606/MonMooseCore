@@ -53,7 +53,7 @@ namespace MonMooseCore.Structure
             }
             else
             {
-                throw new Exception(string.Format("不能加错误的成员，类型名：{0}，成员名：{1}", name, memberInfo.name));
+                throw new DataStructureMemberException(DataStructureMemberException.EErrorId.CannotAddMember, name, memberInfo.name);
             }
         }
     }

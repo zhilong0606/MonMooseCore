@@ -72,7 +72,7 @@ namespace MonMooseCore
                     sb.Append(StopwatchMark.foldStr);
                 }
             }
-            sb.Append(string.Format("({0:N2}) {1}\r\n", m_stopwatch.ElapsedMilliseconds / 1000f, m_name));
+            sb.Append(string.Format("({0:N3}) {1}\r\n", m_stopwatch.ElapsedMilliseconds / 1000f, m_name));
             for (int i = 0; i < m_childList.Count; ++i)
             {
                 List<string> list = new List<string>(markList);

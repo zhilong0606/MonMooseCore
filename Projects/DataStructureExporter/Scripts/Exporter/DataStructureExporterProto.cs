@@ -203,7 +203,7 @@ namespace MonMooseCore.DataExporter
                             }
                             else
                             {
-                                throw new Exception(string.Format("类型不能同时拥有多个组合，类型名：{0}，成员名：{1}, 成员类型名：{2}", structureInfo.name, memberInfo.name, memberStructureInfo.name));
+                                throw new Exception();
                             }
                             writerGroup.AddImportGroup(GetExportGroup(memberListInfo.valueStructureInfo.name));
                             break;
@@ -215,7 +215,7 @@ namespace MonMooseCore.DataExporter
                             }
                             else
                             {
-                                throw new Exception(string.Format("类型不能同时拥有多个组合，类型名：{0}，成员名：{1}, 成员类型名：{2}", structureInfo.name, memberInfo.name, memberStructureInfo.name));
+                                throw new Exception();
                             }
                             writerGroup.AddImportGroup(GetExportGroup(memberDictionaryInfo.keyStructureInfo.name));
                             writerGroup.AddImportGroup(GetExportGroup(memberDictionaryInfo.valueStructureInfo.name));
@@ -244,7 +244,7 @@ namespace MonMooseCore.DataExporter
                     ListStructureInfo memberListInfo = memberStructureInfo as ListStructureInfo;
                     if (memberListInfo.valueStructureInfo.isCollection)
                     {
-                        throw new Exception(string.Format("类型不能同时拥有多个组合，类型名：{0}，成员名：{1}, 成员类型名：{2}", structureInfo.name, memberInfo.name, memberStructureInfo.name));
+                        throw new Exception();
                     }
                     ilWriter.AppendLine("repeated {0} {1} = {2};", GetExportName(memberListInfo.valueStructureInfo), memberInfo.name, i + 1);
                     writerGroup.AddImportGroup(GetExportGroup(memberListInfo.valueStructureInfo.name));

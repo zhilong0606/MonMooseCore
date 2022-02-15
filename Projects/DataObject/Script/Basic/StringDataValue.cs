@@ -12,6 +12,10 @@ namespace MonMooseCore.Data
         public override void Init(string str)
         {
             value = str;
+            if (string.IsNullOrEmpty(value))
+            {
+                value = string.Empty;
+            }
         }
     }
 }
