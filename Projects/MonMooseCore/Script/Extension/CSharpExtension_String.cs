@@ -4,7 +4,7 @@ namespace MonMooseCore
 {
     public static partial class CSharpExtension
     {
-        public static string[] Split(this string str, IList<char> separatorList, IList<char> openCharList, IList<char> closeCharList, bool skipEmpty, bool needTrim)
+        public static string[] SplitSafely(this string str, IList<char> separatorList, IList<char> openCharList, IList<char> closeCharList, bool skipEmpty, bool needTrim)
         {
             List<string> split = new List<string>();
             if (!string.IsNullOrEmpty(str))
@@ -31,7 +31,7 @@ namespace MonMooseCore
                             sp = str.Substring(startIndex, splitLength);
                             if (needTrim)
                             {
-                                sp = sp.Trim();
+                                sp = sp.TrimSafely();
                             }
                         }
                         if (!string.IsNullOrEmpty(sp) || !skipEmpty)
@@ -54,6 +54,50 @@ namespace MonMooseCore
                 }
             }
             return split.ToArray();
+        }
+
+        public static string ReplaceSafely(this string str, char ch1, char ch2)
+        {
+            if (!string.IsNullOrEmpty(str))
+            {
+                if (str.Contains(ch1))
+                {
+                    return str.Replace(ch1, ch2);
+                }
+                return str;
+            }
+            return string.Empty;
+        }
+
+        public static string ReplaceSafely(this string str, string str1, string str2)
+        {
+            if (!string.IsNullOrEmpty(str))
+            {
+                if (str.Contains(str1))
+                {
+                    return str.Replace(str1, str2);
+                }
+                return str;
+            }
+            return string.Empty;
+        }
+
+        public static string TrimSafely(this string str)
+        {
+            if (str != null)
+            {
+                return str.Trim();
+            }
+            return string.Empty;
+        }
+
+        public static string TrimSafely(this string str, char ch)
+        {
+            if (str != null)
+            {
+                return str.Trim(ch);
+            }
+            return string.Empty;
         }
     }
 }
