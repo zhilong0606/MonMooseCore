@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MonMooseCore.Structure
+namespace MonMoose.Core.Structure
 {
     public class DataStructureMemberException : Exception
     {

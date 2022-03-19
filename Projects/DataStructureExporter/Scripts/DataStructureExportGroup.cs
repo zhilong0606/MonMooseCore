@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace MonMooseCore.DataExporter
+namespace MonMoose.Core.DataExporter
 {
     public class DataStructureExportGroup
     {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace MonMooseCore.Structure
+namespace MonMoose.Core.Structure
 {
     public class StructureManager
     {

@@ -1,8 +1,8 @@
-﻿using MonMooseCore;
-using MonMooseCore.Data;
-using MonMooseCore.Structure;
+﻿using MonMoose.Core;
+using MonMoose.Core.Data;
+using MonMoose.Core.Structure;
 
-namespace MonMooseCore.DataExporter
+namespace MonMoose.Core.DataExporter
 {
     public class DataLoaderExportContext
     {

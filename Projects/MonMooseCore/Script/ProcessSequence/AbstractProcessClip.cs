@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MonMooseCore
+namespace MonMoose.Core
 {
     public abstract class AbstractProcessClip : IProcessClip
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MonMooseCore.Structure
+namespace MonMoose.Core.Structure
 {
     public class EnumStructureInfo : MemberedStructureInfo<EnumMemberInfo>
     {

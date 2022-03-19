@@ -1,4 +1,4 @@
-﻿namespace MonMooseCore.Data
+﻿namespace MonMoose.Core.Data
 {
     public abstract class DataValue
     {

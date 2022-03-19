@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace MonMooseCore
+namespace MonMoose.Core
 {
     public class StopwatchCollector
     {

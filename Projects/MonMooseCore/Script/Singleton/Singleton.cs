@@ -1,4 +1,4 @@
-﻿namespace MonMooseCore
+﻿namespace MonMoose.Core
 {
     public class Singleton<T> where T : Singleton<T>, new()
     {

@@ -1,7 +1,8 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
-namespace MonMooseCore
+namespace MonMoose.Core
 {
     public abstract class ProcessCollection : ProcessBase
     {
@@ -28,6 +29,16 @@ namespace MonMooseCore
             }
         }
 
+        protected override void OnUnInit()
+        {
+            for (int i = 0; i < m_subProcessList.Count; ++i)
+            {
+                m_subProcessList[i].UnInit();
+            }
+            actionOnSkip = null;
+            funcOnCanStart = null;
+        }
+
         public void Add(ProcessBase process)
         {
             if (process == null)
@@ -36,6 +47,10 @@ namespace MonMooseCore
             }
             process.actionOnEnd = OnSubProcessEnd;
             m_subProcessList.Add(process);
+        }
+
+        public void Clear()
+        {
         }
 
         protected override void OnSkip()
@@ -49,11 +64,6 @@ namespace MonMooseCore
 
         public override void OnRelease()
         {
-            for (int i = 0; i < m_subProcessList.Count; ++i)
-            {
-                m_subProcessList[i].UnInit();
-            }
-            m_subProcessList.Clear();
             actionOnSkip = null;
             funcOnCanStart = null;
             base.OnRelease();

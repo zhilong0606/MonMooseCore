@@ -1,4 +1,4 @@
-﻿namespace MonMooseCore.Structure
+﻿namespace MonMoose.Core.Structure
 {
     public abstract class CollectionStructureInfo : StructureInfo
     {

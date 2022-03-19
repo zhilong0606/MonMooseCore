@@ -1,4 +1,4 @@
-﻿namespace MonMooseCore
+﻿namespace MonMoose.Core
 {
     public abstract class StateContext : ClassPoolObj
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MonMooseCore.Data
+namespace MonMoose.Core.Data
 {
 
     public abstract class BasicDataValue<T> : BasicDataValue where T : struct

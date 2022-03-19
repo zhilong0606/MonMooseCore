@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MonMooseCore
+namespace MonMoose.Core
 {
     public class TickProcess
     {

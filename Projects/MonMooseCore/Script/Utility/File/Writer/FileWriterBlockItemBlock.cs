@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text;
 
-namespace MonMooseCore
+namespace MonMoose.Core
 {
     public class FileWriterBlockItemBlock : FileWriterBlockItem
     {

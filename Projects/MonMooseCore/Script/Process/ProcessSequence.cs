@@ -1,4 +1,8 @@
-namespace MonMooseCore
+using System;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace MonMoose.Core
 {
     public class ProcessSequence : ProcessCollection
     {
@@ -40,18 +44,12 @@ namespace MonMooseCore
                         if (process.state != EProcessState.Ended)
                         {
                             m_curProcess = process;
-                            m_curProcess.actionOnEnd = OnSubProcessEnd;
                             break;
-                        }
-                        else
-                        {
-                            process.UnInit();
                         }
                     }
                     else
                     {
                         process.Skip();
-                        process.UnInit();
                     }
                 }
             }
@@ -79,11 +77,11 @@ namespace MonMooseCore
             }
         }
 
-        protected override void OnUpdate(float deltaTime)
+        protected override void OnTick(float deltaTime)
         {
             if (m_curProcess != null)
             {
-                m_curProcess.Update(deltaTime);
+                m_curProcess.Tick(deltaTime);
             }
         }
 

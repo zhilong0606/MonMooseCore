@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 
-namespace MonMooseCore
+namespace MonMoose.Core
 {
     public class FrameCut
     {

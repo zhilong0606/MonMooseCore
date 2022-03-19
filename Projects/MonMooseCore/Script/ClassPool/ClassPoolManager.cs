@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MonMooseCore
+namespace MonMoose.Core
 {
     public class ClassPoolManager : Singleton<ClassPoolManager>
     {
@@ -23,8 +23,21 @@ namespace MonMooseCore
 
         public void Release(object obj)
         {
+            if (obj == null)
+            {
+                return;
+            }
             ClassPool pool = GetPool(obj.GetType());
             pool.Release(obj);
+        }
+
+        public void ReleaseAll(IList objList)
+        {
+            int count = objList.Count;
+            for (int i = 0; i < count; ++i)
+            {
+                Release(objList[i]);
+            }
         }
 
         public void SetCapacity(Type type, int capacity)

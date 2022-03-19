@@ -1,5 +1,5 @@
 ﻿
-namespace MonMooseCore
+namespace MonMoose.Core
 {
     public abstract class AbstractEventParams : ClassPoolObj
     {

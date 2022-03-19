@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace MonMooseCore
+namespace MonMoose.Core
 {
     public static partial class CSharpExtension
     {

@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace MonMooseCore
+namespace MonMoose.Core
 {
     public abstract class FileWriterBlockItem
     {

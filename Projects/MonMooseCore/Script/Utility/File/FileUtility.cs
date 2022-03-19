@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace MonMooseCore
+namespace MonMoose.Core
 {
     public static class FileUtility
     {

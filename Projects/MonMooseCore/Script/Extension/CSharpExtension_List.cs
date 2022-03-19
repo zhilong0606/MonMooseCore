@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace MonMooseCore
+namespace MonMoose.Core
 {
     public static partial class CSharpExtension
     {
@@ -13,6 +13,11 @@ namespace MonMooseCore
             }
             value = default(T);
             return false;
+        }
+
+        public static bool CheckIndex(this IList list, int index)
+        {
+            return list != null && index >= 0 && index < list.Count;
         }
 
         public static T GetValueSafely<T>(this IList<T> list, int index, T defaultValue = default(T))

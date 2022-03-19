@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MonMooseCore.Structure
+namespace MonMoose.Core.Structure
 {
     public abstract class MemberedStructureInfo<T> : MemberedStructureInfo
         where T : MemberInfo

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace MonMooseCore.Data
+namespace MonMoose.Core.Data
 {
     public class DataObject
     {

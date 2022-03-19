@@ -1,5 +1,5 @@
 ﻿
-namespace MonMooseCore
+namespace MonMoose.Core
 {
     public class StructHolder<T> : ClassPoolObj
         where T : struct

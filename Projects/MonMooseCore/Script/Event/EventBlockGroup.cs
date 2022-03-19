@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace MonMooseCore
+namespace MonMoose.Core
 {
     public class EventBlockGroup
     {
@@ -21,7 +21,7 @@ namespace MonMooseCore
                     }
                     m_isBlocked = value;
                 }
-
+                
             }
         }
 

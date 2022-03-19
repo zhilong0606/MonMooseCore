@@ -1,4 +1,4 @@
-﻿namespace MonMooseCore
+﻿namespace MonMoose.Core
 {
     public sealed class ConditionOr : ConditionBaseTwo
     {

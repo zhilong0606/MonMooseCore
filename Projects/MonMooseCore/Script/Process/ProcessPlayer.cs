@@ -1,7 +1,8 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
-namespace MonMooseCore
+namespace MonMoose.Core
 {
     public class ProcessPlayer
     {
@@ -66,7 +67,7 @@ namespace MonMooseCore
             m_curProcess = null;
             StartNext();
         }
-
+        
         public void Clear()
         {
             for (int i = 0; i < m_processList.Count; ++i)
@@ -118,7 +119,7 @@ namespace MonMooseCore
         {
             if (m_curProcess != null)
             {
-                m_curProcess.Update(deltaTime);
+                m_curProcess.Tick(deltaTime);
             }
         }
 

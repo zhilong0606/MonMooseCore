@@ -1,6 +1,8 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 
-namespace MonMooseCore
+namespace MonMoose.Core
 {
     public class ProcessParallel : ProcessCollection
     {
@@ -42,7 +44,7 @@ namespace MonMooseCore
             }
         }
 
-        protected override void OnUpdate(float deltaTime)
+        protected override void OnTick(float deltaTime)
         {
             m_tempList.AddRange(m_subProcessList);
             for (int i = 0; i < m_tempList.Count; ++i)
@@ -50,7 +52,7 @@ namespace MonMooseCore
                 ProcessBase process = m_tempList[i];
                 if (process.state == EProcessState.Started)
                 {
-                    process.Update(deltaTime);
+                    process.Tick(deltaTime);
                 }
             }
             m_tempList.Clear();
@@ -58,7 +60,6 @@ namespace MonMooseCore
 
         protected override void OnPause()
         {
-            base.OnPause();
             int count = m_subProcessList.Count;
             for (int i = 0; i < count; ++i)
             {
@@ -68,7 +69,6 @@ namespace MonMooseCore
 
         protected override void OnResume()
         {
-            base.OnResume();
             int count = m_subProcessList.Count;
             for (int i = 0; i < count; ++i)
             {

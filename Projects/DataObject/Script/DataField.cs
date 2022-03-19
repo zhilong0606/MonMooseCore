@@ -1,6 +1,6 @@
-﻿using MonMooseCore.Structure;
+﻿using MonMoose.Core.Structure;
 
-namespace MonMooseCore.Data
+namespace MonMoose.Core.Data
 {
     public class DataField
     {

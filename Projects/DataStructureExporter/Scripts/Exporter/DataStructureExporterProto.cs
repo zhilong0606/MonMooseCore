@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
-using MonMooseCore.Structure;
+using MonMoose.Core.Structure;
 
-namespace MonMooseCore.DataExporter
+namespace MonMoose.Core.DataExporter
 {
     public class DataStructureExporterProto : DataStructureExporter
     {
