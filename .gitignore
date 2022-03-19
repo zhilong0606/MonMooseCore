@@ -4,7 +4,7 @@ Projects/MonMooseCore/*.user
 Projects/MonMooseCore/.vs/
 Projects/MonMooseCore/bin/
 Projects/MonMooseCore/obj/
-Projects/MonMooseCore/*.meta
+Projects/MonMooseCore/**/*.meta
 
 Projects/DataStructure/*.user
 Projects/DataStructure/.vs/
