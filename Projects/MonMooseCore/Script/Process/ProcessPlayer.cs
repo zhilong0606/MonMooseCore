@@ -70,10 +70,7 @@ namespace MonMoose.Core
         
         public void Clear()
         {
-            for (int i = 0; i < m_processList.Count; ++i)
-            {
-                m_processList[i].UnInit();
-            }
+            m_processList.ReleaseAll();
             m_processList.Clear();
             if (m_curProcess != null)
             {
@@ -89,6 +86,7 @@ namespace MonMoose.Core
             {
                 ProcessBase process = m_processList[0];
                 m_processList.RemoveAt(0);
+                process.Init();
                 if (process.canStart)
                 {
                     process.Start();

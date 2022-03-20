@@ -6,11 +6,47 @@ namespace MonMoose.Core
 {
     public class ProcessSequence : ProcessCollection
     {
-        private ProcessBase m_curProcess;
+        private int m_curIndex;
 
         public ProcessBase curProcess
         {
-            get { return m_curProcess; }
+            get { return m_subProcessList.GetValueSafely(m_curIndex); }
+        }
+
+        public void ProcessNext()
+        {
+            while (m_curIndex < m_subProcessList.Count)
+            {
+                m_curIndex++;
+                ProcessBase process = m_subProcessList.GetValueSafely(m_curIndex);
+                if (process == null)
+                {
+                    break;
+                }
+                process.Init();
+                if (process.canStart)
+                {
+                    process.Start();
+                    if (process.isStarted)
+                    {
+                        process.actionOnEnd = OnSubProcessEnd;
+                        break;
+                    }
+                    else
+                    {
+                        process.UnInit();
+                    }
+                }
+                else
+                {
+                    process.Skip();
+                    process.UnInit();
+                }
+            }
+            if (curProcess == null)
+            {
+                End();
+            }
         }
 
         protected override void OnStart()
@@ -18,77 +54,46 @@ namespace MonMoose.Core
             ProcessNext();
         }
 
-        protected override void OnSubProcessEnd(ProcessBase process)
+        protected override void OnPause()
         {
-            if (m_curProcess != process)
+            if (curProcess != null)
+            {
+                curProcess.Pause();
+            }
+        }
+
+        protected override void OnResume()
+        {
+            if (curProcess != null)
+            {
+                curProcess.Resume();
+            }
+        }
+
+        protected override void OnTick(float deltaTime)
+        {
+            if (curProcess != null)
+            {
+                curProcess.Tick(deltaTime);
+            }
+        }
+
+        public override void OnRelease()
+        {
+            m_curIndex = 0;
+            base.OnRelease();
+        }
+
+        private void OnSubProcessEnd(ProcessBase process)
+        {
+            int index = m_subProcessList.IndexOf(process);
+            if (m_curIndex != index)
             {
                 DebugUtility.LogError("Cannot End Process which is not Current Process. Please Remove it or Skip it.");
                 return;
             }
             process.UnInit();
             ProcessNext();
-        }
-
-        public void ProcessNext()
-        {
-            m_curProcess = null;
-            if (m_subProcessList.Count > 0)
-            {
-                while (m_subProcessList.Count > 0)
-                {
-                    ProcessBase process = m_subProcessList[0];
-                    m_subProcessList.RemoveAt(0);
-                    if (process.canStart)
-                    {
-                        process.Start();
-                        if (process.state != EProcessState.Ended)
-                        {
-                            m_curProcess = process;
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        process.Skip();
-                    }
-                }
-            }
-            if (m_subProcessList.Count == 0 && m_curProcess == null)
-            {
-                End();
-            }
-        }
-
-        protected override void OnPause()
-        {
-            base.OnPause();
-            if (m_curProcess != null)
-            {
-                m_curProcess.Pause();
-            }
-        }
-
-        protected override void OnResume()
-        {
-            base.OnResume();
-            if (m_curProcess != null)
-            {
-                m_curProcess.Resume();
-            }
-        }
-
-        protected override void OnTick(float deltaTime)
-        {
-            if (m_curProcess != null)
-            {
-                m_curProcess.Tick(deltaTime);
-            }
-        }
-
-        public override void OnRelease()
-        {
-            m_curProcess = null;
-            base.OnRelease();
         }
     }
 }

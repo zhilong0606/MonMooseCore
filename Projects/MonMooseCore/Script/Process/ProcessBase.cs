@@ -11,27 +11,44 @@ namespace MonMoose.Core
 
         public Action<ProcessBase> actionOnEnd;
 
-        public virtual bool canStart { get { return true; } }
         public EProcessState state { get { return m_state; } }
+        public virtual bool canStart { get { return true; } }
+
+        public bool isStarted
+        {
+            get { return m_state == EProcessState.Started || m_state == EProcessState.Paused; }
+        }
+
+        public bool canUnInit
+        {
+            get { return m_state != EProcessState.None && m_state != EProcessState.UnInited; }
+        }
 
         public void Init()
         {
+            if (m_state != EProcessState.None && m_state != EProcessState.UnInited)
+            {
+                DebugUtility.LogError("Cannot Init Process state is " + m_state);
+                return;
+            }
+            m_state = EProcessState.Inited;
             OnInit();
-        }
-
-        private void OnTimeUp()
-        {
-            End();
         }
 
         public void UnInit()
         {
+            if (!canUnInit)
+            {
+                DebugUtility.LogError("Cannot UnInit Process state is " + m_state);
+                return;
+            }
+            m_state = EProcessState.UnInited;
             OnUnInit();
         }
 
         public void Start()
         {
-            if (m_state != EProcessState.None && m_state != EProcessState.Ended)
+            if (m_state != EProcessState.Inited)
             {
                 DebugUtility.LogError("Cannot Start Process state is " + m_state);
                 return;
@@ -42,7 +59,7 @@ namespace MonMoose.Core
 
         public void End()
         {
-            if (m_state != EProcessState.Started)
+            if (m_state != EProcessState.Inited && m_state != EProcessState.Started)
             {
                 DebugUtility.LogError("Cannot End Process state is " + m_state);
                 return;
@@ -81,7 +98,7 @@ namespace MonMoose.Core
 
         public void Skip()
         {
-            if (m_state != EProcessState.None)
+            if (m_state != EProcessState.Inited)
             {
                 DebugUtility.LogError("Cannot Skip Process state is " + m_state);
                 return;
@@ -133,6 +150,10 @@ namespace MonMoose.Core
 
         public override void OnRelease()
         {
+            if (canUnInit)
+            {
+                UnInit();
+            }
             actionOnEnd = null;
             m_state = EProcessState.None;
             if (m_timer != null)
@@ -140,6 +161,11 @@ namespace MonMoose.Core
                 m_timer.Release();
                 m_timer = null;
             }
+        }
+
+        private void OnTimeUp()
+        {
+            End();
         }
 
         protected virtual void OnInit() { }

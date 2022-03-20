@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace MonMoose.Core
 {
     public class ClassPoolManager : Singleton<ClassPoolManager>
     {
-        private readonly Dictionary<Type, ClassPool> m_poolMap = new Dictionary<Type, ClassPool>();
+        private Dictionary<Type, ClassPool> m_poolMap = new Dictionary<Type, ClassPool>();
 
         //尽量填causer，static类的话填Type，其他填this
         public T Fetch<T>(object causer) where T : class
@@ -19,6 +20,12 @@ namespace MonMoose.Core
         {
             ClassPool pool = GetPool(type);
             return pool.Fetch(causer);
+        }
+
+        public List<T> FetchList<T>(object causer) where T : class
+        {
+            ClassPool pool = GetPool(typeof(List<T>));
+            return pool.Fetch(causer) as List<T>;
         }
 
         public void Release(object obj)
@@ -77,7 +84,14 @@ namespace MonMoose.Core
             {
                 if (!m_poolMap.TryGetValue(type, out pool))
                 {
-                    pool = new ClassPool();
+                    if (typeof(IList).IsAssignableFrom(type))
+                    {
+                        pool = new ClassPoolList();
+                    }
+                    else
+                    {
+                        pool = new ClassPool();
+                    }
                     pool.Init(type);
                     m_poolMap.Add(type, pool);
                 }

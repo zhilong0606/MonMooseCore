@@ -16,9 +16,18 @@ namespace MonMoose.Core
                 for (int i = 0; i < m_tempList.Count; ++i)
                 {
                     ProcessBase process = m_tempList[i];
+                    process.Init();
                     if (process.canStart)
                     {
                         process.Start();
+                        if (process.isStarted)
+                        {
+                            process.actionOnEnd = OnSubProcessEnd;
+                        }
+                        else
+                        {
+                            OnSubProcessEnd(process);
+                        }
                     }
                     else
                     {
@@ -29,16 +38,6 @@ namespace MonMoose.Core
                 m_tempList.Clear();
             }
             else
-            {
-                End();
-            }
-        }
-
-        protected override void OnSubProcessEnd(ProcessBase process)
-        {
-            process.UnInit();
-            m_subProcessList.Remove(process);
-            if (m_subProcessList.Count == 0)
             {
                 End();
             }
@@ -80,6 +79,19 @@ namespace MonMoose.Core
         {
             m_tempList.Clear();
             base.OnRelease();
+        }
+
+        private void OnSubProcessEnd(ProcessBase process)
+        {
+            process.UnInit();
+            for (int i = 0; i < m_subProcessList.Count; ++i)
+            {
+                if (m_subProcessList[i].state != EProcessState.UnInited)
+                {
+                    return;
+                }
+            }
+            End();
         }
     }
 }

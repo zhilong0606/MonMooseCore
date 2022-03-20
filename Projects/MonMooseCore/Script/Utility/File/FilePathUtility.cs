@@ -22,11 +22,7 @@ namespace MonMoose.Core
             if (!string.IsNullOrEmpty(name))
             {
                 name = GetFileName(name);
-                int dotIndex = name.LastIndexOf(m_dotChar);
-                if (dotIndex >= 0)
-                {
-                    return name.Substring(0, dotIndex);
-                }
+                return CutStrBy(name, m_dotStr, false, true);
             }
             return name;
         }
@@ -35,11 +31,8 @@ namespace MonMoose.Core
         {
             if (!string.IsNullOrEmpty(name))
             {
-                int slashIndex = Math.Max(name.LastIndexOf(m_rightUpSlashChar), name.LastIndexOf(m_rightDownSlashChar));
-                if (slashIndex >= 0)
-                {
-                    return name.Substring(slashIndex, name.Length - slashIndex);
-                }
+                name = NormalizePath(name);
+                return CutStrBy(name, GetFilePathSlashStr(EFilePathSlashType.RightUp), false, false);
             }
             return name;
         }
@@ -205,7 +198,12 @@ namespace MonMoose.Core
             return sb.ToString();
         }
 
-        private static string NormalizePath(EFilePathSlashType slashType, string path)
+        public static string NormalizePath(string path)
+        {
+            return NormalizePath(EFilePathSlashType.RightUp, path);
+        }
+
+        public static string NormalizePath(EFilePathSlashType slashType, string path)
         {
             if (!string.IsNullOrEmpty(path))
             {
@@ -217,6 +215,46 @@ namespace MonMoose.Core
             }
             return path;
         }
+
+        public static string Concat(string str1, string str2, string dupStr)
+        {
+            int dupLength = dupStr.Length;
+            return str1 + CutStr(str2, dupLength - 1, false);
+        }
+
+        public static string CutStrBy(string srcStr, string cutterStr, bool isForwardFindCutter, bool useFront)
+        {
+            if (!string.IsNullOrEmpty(srcStr))
+            {
+                int index = isForwardFindCutter ? srcStr.IndexOf(cutterStr, StringComparison.Ordinal) : srcStr.LastIndexOf(cutterStr, StringComparison.Ordinal);
+                return CutStr(srcStr, index, useFront);
+            }
+            return string.Empty;
+        }
+
+        public static string CutStr(string srcStr, int index, bool useFront)
+        {
+            if (!string.IsNullOrEmpty(srcStr))
+            {
+                if (index >= 0)
+                {
+                    return useFront ? srcStr.Substring(0, index) : srcStr.Substring(index + 1);
+                }
+                return srcStr;
+            }
+            return string.Empty;
+        }
+
+        public static string GetFileFolderPath(string filePath)
+        {
+            if (!string.IsNullOrEmpty(filePath))
+            {
+                filePath = NormalizePath(filePath);
+                return CutStrBy(filePath, GetFilePathSlashStr(EFilePathSlashType.RightUp), false, true);
+            }
+            return string.Empty;
+        }
+
 
         private static string NormalizeFolderPath(EFilePathSlashType slashType, string path)
         {

@@ -7,8 +7,10 @@ namespace MonMoose.Core
     public enum EProcessState
     {
         None,
-        Started,
-        Paused,
-        Ended,
+        Inited,//None
+        Started,//Pause,Init
+        Paused,//Start
+        Ended,//Init,Start
+        UnInited,//Init,Start,Pause,End
     }
 }

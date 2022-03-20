@@ -21,22 +21,10 @@ namespace MonMoose.Core
             get { return m_subProcessList.Count > 0 && (funcOnCanStart == null || funcOnCanStart()); }
         }
 
-        protected override void OnInit()
-        {
-            for (int i = 0; i < m_subProcessList.Count; ++i)
-            {
-                m_subProcessList[i].Init();
-            }
-        }
-
         protected override void OnUnInit()
         {
-            for (int i = 0; i < m_subProcessList.Count; ++i)
-            {
-                m_subProcessList[i].UnInit();
-            }
-            actionOnSkip = null;
             funcOnCanStart = null;
+            actionOnSkip = null;
         }
 
         public void Add(ProcessBase process)
@@ -45,12 +33,7 @@ namespace MonMoose.Core
             {
                 return;
             }
-            process.actionOnEnd = OnSubProcessEnd;
             m_subProcessList.Add(process);
-        }
-
-        public void Clear()
-        {
         }
 
         protected override void OnSkip()
@@ -64,11 +47,9 @@ namespace MonMoose.Core
 
         public override void OnRelease()
         {
-            actionOnSkip = null;
-            funcOnCanStart = null;
+            m_subProcessList.ReleaseAll();
+            m_subProcessList.Clear();
             base.OnRelease();
         }
-
-        protected abstract void OnSubProcessEnd(ProcessBase process);
     }
 }
