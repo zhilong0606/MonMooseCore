@@ -22,7 +22,7 @@ namespace MonMoose.Core
             return pool.Fetch(causer);
         }
 
-        public List<T> FetchList<T>(object causer) where T : class
+        public List<T> FetchList<T>(object causer)
         {
             ClassPool pool = GetPool(typeof(List<T>));
             return pool.Fetch(causer) as List<T>;

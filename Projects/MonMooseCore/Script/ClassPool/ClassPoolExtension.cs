@@ -11,6 +11,13 @@ namespace MonMoose.Core
                 obj.creator.Release(obj);
             }
         }
+        public static void Release(this object obj)
+        {
+            if (obj != null)
+            {
+                ClassPoolManager.instance.Release(obj);
+            }
+        }
 
         public static void ReleaseAll<T>(this IList<T> objList) where T : IClassPoolObj
         {

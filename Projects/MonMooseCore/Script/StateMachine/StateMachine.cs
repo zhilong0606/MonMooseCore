@@ -84,11 +84,11 @@ namespace MonMoose.Core
             m_curState.Enter(context);
         }
 
-        public void Tick()
+        public void Tick(float deltaTime)
         {
             if (m_curState != null)
             {
-                m_curState.Tick();
+                m_curState.Tick(deltaTime);
             }
         }
     }

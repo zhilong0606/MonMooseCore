@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace MonMoose.Core
 {
-    public class ProcessSequence : ProcessCollection
+    public class SequenceProcess : CollectionProcess<ProcessBase>
     {
         private int m_curIndex;
 
@@ -21,32 +21,24 @@ namespace MonMoose.Core
                 ProcessBase process = m_subProcessList.GetValueSafely(m_curIndex);
                 if (process == null)
                 {
+                    continue;
+                }
+                if (StartSubProcessAndCheckRunning(process))
+                {
                     break;
                 }
-                process.Init();
-                if (process.canStart)
-                {
-                    process.Start();
-                    if (process.isStarted)
-                    {
-                        process.actionOnEnd = OnSubProcessEnd;
-                        break;
-                    }
-                    else
-                    {
-                        process.UnInit();
-                    }
-                }
-                else
-                {
-                    process.Skip();
-                    process.UnInit();
-                }
+                process.UnInit();
             }
             if (curProcess == null)
             {
                 End();
             }
+        }
+
+        public override void OnFetch()
+        {
+            m_curIndex = -1;
+            base.OnFetch();
         }
 
         protected override void OnStart()
@@ -78,13 +70,7 @@ namespace MonMoose.Core
             }
         }
 
-        public override void OnRelease()
-        {
-            m_curIndex = 0;
-            base.OnRelease();
-        }
-
-        private void OnSubProcessEnd(ProcessBase process)
+        protected override void OnSubProcessEnd(ProcessBase process)
         {
             int index = m_subProcessList.IndexOf(process);
             if (m_curIndex != index)

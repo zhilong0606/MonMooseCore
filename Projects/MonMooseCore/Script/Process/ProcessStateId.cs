@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace MonMoose.Core
 {
-    public enum EProcessState
+    public enum ProcessStateId
     {
         None,
         Inited,//None

@@ -86,26 +86,13 @@ namespace MonMoose.Core
             {
                 ProcessBase process = m_processList[0];
                 m_processList.RemoveAt(0);
-                process.Init();
-                if (process.canStart)
+                if (process.InitAndStartAndCheckRunning())
                 {
-                    process.Start();
-                    if (process.state != EProcessState.Ended)
-                    {
-                        m_curProcess = process;
-                        m_curProcess.actionOnEnd = OnProcessEnd;
-                        break;
-                    }
-                    else
-                    {
-                        process.UnInit();
-                    }
+                    process.actionOnEnd = OnProcessEnd;
+                    m_curProcess = process;
+                    break;
                 }
-                else
-                {
-                    process.Skip();
-                    process.UnInit();
-                }
+                process.UnInit();
             }
             if (m_processList.Count == 0 && m_curProcess == null)
             {
@@ -131,13 +118,13 @@ namespace MonMoose.Core
 
         private void LogProcess(ProcessBase process)
         {
-            if (process is ProcessSequence)
+            if (process is SequenceProcess)
             {
-                LogSequenceProcess(process as ProcessSequence);
+                LogSequenceProcess(process as SequenceProcess);
             }
-            else if (process is ProcessParallel)
+            else if (process is ParallelProcess)
             {
-                LogParallelProcess(process as ProcessParallel);
+                LogParallelProcess(process as ParallelProcess);
             }
             else
             {
@@ -145,7 +132,7 @@ namespace MonMoose.Core
             }
         }
 
-        private void LogSequenceProcess(ProcessSequence sequenceProcess)
+        private void LogSequenceProcess(SequenceProcess sequenceProcess)
         {
             if (sequenceProcess.curProcess != null)
             {
@@ -153,7 +140,7 @@ namespace MonMoose.Core
             }
         }
 
-        private void LogParallelProcess(ProcessParallel parallelProcess)
+        private void LogParallelProcess(ParallelProcess parallelProcess)
         {
             for (int i = 0; i < parallelProcess.subProcessList.Count; ++i)
             {

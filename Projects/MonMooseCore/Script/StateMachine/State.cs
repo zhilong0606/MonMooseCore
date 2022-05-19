@@ -38,15 +38,15 @@
             m_isRunning = false;
         }
 
-        public void Tick()
+        public void Tick(float deltaTime)
         {
-            OnTick();
+            OnTick(deltaTime);
         }
 
         protected virtual void OnInit() { }
         protected virtual void OnUnInit() { }
         protected virtual void OnEnter(StateContext context) { }
         protected virtual void OnExit() { }
-        protected virtual void OnTick() { }
+        protected virtual void OnTick(float deltaTime) { }
     }
 }

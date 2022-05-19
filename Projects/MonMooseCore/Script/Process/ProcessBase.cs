@@ -6,32 +6,32 @@ namespace MonMoose.Core
 {
     public class ProcessBase : ClassPoolObj
     {
-        private EProcessState m_state;
+        private ProcessStateId m_state;
         private Timer m_timer;
 
         public Action<ProcessBase> actionOnEnd;
 
-        public EProcessState state { get { return m_state; } }
+        public ProcessStateId state { get { return m_state; } }
         public virtual bool canStart { get { return true; } }
 
         public bool isStarted
         {
-            get { return m_state == EProcessState.Started || m_state == EProcessState.Paused; }
+            get { return m_state == ProcessStateId.Started || m_state == ProcessStateId.Paused; }
         }
 
         public bool canUnInit
         {
-            get { return m_state != EProcessState.None && m_state != EProcessState.UnInited; }
+            get { return m_state != ProcessStateId.None && m_state != ProcessStateId.UnInited; }
         }
 
         public void Init()
         {
-            if (m_state != EProcessState.None && m_state != EProcessState.UnInited)
+            if (m_state != ProcessStateId.None && m_state != ProcessStateId.UnInited)
             {
                 DebugUtility.LogError("Cannot Init Process state is " + m_state);
                 return;
             }
-            m_state = EProcessState.Inited;
+            m_state = ProcessStateId.Inited;
             OnInit();
         }
 
@@ -42,29 +42,41 @@ namespace MonMoose.Core
                 DebugUtility.LogError("Cannot UnInit Process state is " + m_state);
                 return;
             }
-            m_state = EProcessState.UnInited;
+            m_state = ProcessStateId.UnInited;
             OnUnInit();
         }
 
         public void Start()
         {
-            if (m_state != EProcessState.Inited)
+            if (m_state != ProcessStateId.Inited)
             {
                 DebugUtility.LogError("Cannot Start Process state is " + m_state);
                 return;
             }
-            m_state = EProcessState.Started;
+            m_state = ProcessStateId.Started;
             OnStart();
+        }
+
+        public bool InitAndStartAndCheckRunning()
+        {
+            Init();
+            if (canStart)
+            {
+                Start();
+                return isStarted;
+            }
+            Skip();
+            return false;
         }
 
         public void End()
         {
-            if (m_state != EProcessState.Inited && m_state != EProcessState.Started)
+            if (m_state != ProcessStateId.Inited && m_state != ProcessStateId.Started)
             {
                 DebugUtility.LogError("Cannot End Process state is " + m_state);
                 return;
             }
-            m_state = EProcessState.Ended;
+            m_state = ProcessStateId.Ended;
             OnEnd();
             if (actionOnEnd != null)
             {
@@ -76,34 +88,34 @@ namespace MonMoose.Core
 
         public void Pause()
         {
-            if (m_state != EProcessState.Started)
+            if (m_state != ProcessStateId.Started)
             {
                 DebugUtility.LogError("Cannot Pause Process state is " + m_state);
                 return;
             }
-            m_state = EProcessState.Paused;
+            m_state = ProcessStateId.Paused;
             OnPause();
         }
 
         public void Resume()
         {
-            if (m_state != EProcessState.Paused)
+            if (m_state != ProcessStateId.Paused)
             {
                 DebugUtility.LogError("Cannot Resume Process state is " + m_state);
                 return;
             }
-            m_state = EProcessState.Started;
+            m_state = ProcessStateId.Started;
             OnResume();
         }
 
         public void Skip()
         {
-            if (m_state != EProcessState.Inited)
+            if (m_state != ProcessStateId.Inited)
             {
                 DebugUtility.LogError("Cannot Skip Process state is " + m_state);
                 return;
             }
-            m_state = EProcessState.Ended;
+            m_state = ProcessStateId.Ended;
             OnSkip();
         }
 
@@ -141,6 +153,10 @@ namespace MonMoose.Core
 
         public void Tick(float deltaTime)
         {
+            if (m_state != ProcessStateId.Started)
+            {
+                return;
+            }
             if (m_timer != null)
             {
                 m_timer.Tick(deltaTime);
@@ -155,7 +171,7 @@ namespace MonMoose.Core
                 UnInit();
             }
             actionOnEnd = null;
-            m_state = EProcessState.None;
+            m_state = ProcessStateId.None;
             if (m_timer != null)
             {
                 m_timer.Release();
