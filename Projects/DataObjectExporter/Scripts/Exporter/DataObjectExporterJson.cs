@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MonMooseCore.DataExporter
+namespace MonMoose.Core.DataExporter
 {
     public class DataObjectExporterJson : DataObjectExporter
     {

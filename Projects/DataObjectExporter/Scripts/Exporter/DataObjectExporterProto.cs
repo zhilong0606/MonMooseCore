@@ -6,10 +6,10 @@ using System.Reflection;
 using System.Text;
 using Google.Protobuf;
 using Google.Protobuf.Collections;
-using MonMooseCore.Data;
-using MonMooseCore.Structure;
+using MonMoose.Core.Data;
+using MonMoose.Core.Structure;
 
-namespace MonMooseCore.DataExporter
+namespace MonMoose.Core.DataExporter
 {
     public class DataObjectExporterProto : DataObjectExporter
     {
@@ -27,7 +27,9 @@ namespace MonMooseCore.DataExporter
             {
                 return;
             }
+            m_context.stopwatchCollector.Start("GetCompilerAssembly");
             m_assembly = GetCompilerAssembly(m_context.codeFilePathList.ToArray());
+            m_context.stopwatchCollector.Stop();
             if (m_assembly == null)
             {
                 return;

@@ -1,4 +1,4 @@
-﻿namespace MonMooseCore.DataExporter
+﻿namespace MonMoose.Core.DataExporter
 {
     public class DataObjectExporterFlat : DataObjectExporter
     {

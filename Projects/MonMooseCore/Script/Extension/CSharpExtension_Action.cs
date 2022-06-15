@@ -43,13 +43,5 @@ namespace MonMoose.Core
                 action(p0, p1, p2, p3);
             }
         }
-
-        public static void InvokeSafely<T0, T1, T2, T3, T4>(this Action<T0, T1, T2, T3, T4> action, T0 p0, T1 p1, T2 p2, T3 p3, T4 p4)
-        {
-            if (action != null)
-            {
-                action(p0, p1, p2, p3, p4);
-            }
-        }
     }
 }

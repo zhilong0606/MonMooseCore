@@ -12,8 +12,8 @@ namespace MonMoose.Core.Structure
             Dictionary<int, string> basicNameMap = new Dictionary<int, string>()
             {
                 {(int)EBasicStructureType.Bool, "Boolean" },
-                {(int)EBasicStructureType.Int8, "SByte" },
-                {(int)EBasicStructureType.UInt8, "Byte" },
+                {(int)EBasicStructureType.Int8, "Int8" },
+                {(int)EBasicStructureType.UInt8, "UInt8" },
                 {(int)EBasicStructureType.Int16, "Int16" },
                 {(int)EBasicStructureType.UInt16, "UInt16" },
                 {(int)EBasicStructureType.Int32, "Int32" },
