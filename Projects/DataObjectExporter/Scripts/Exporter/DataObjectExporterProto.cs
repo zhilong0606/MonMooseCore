@@ -182,11 +182,15 @@ namespace MonMoose.Core.DataExporter
             if (idField == null)
             {
                 Type valueType = GetType(structureInfo);
-                idField = valueType.GetField("iD_", BindingFlags.NonPublic | BindingFlags.Instance);
+                idField = valueType.GetField("ID_", BindingFlags.NonPublic | BindingFlags.Instance);
             }
             lock (m_idFieldMapLock)
             {
                 m_idFieldMap[structureInfo.name] = idField;
+            }
+            if (idField == null)
+            {
+                throw new Exception(structureInfo.name + "没有Id");
             }
             idField.SetValue(obj, id);
             return obj;

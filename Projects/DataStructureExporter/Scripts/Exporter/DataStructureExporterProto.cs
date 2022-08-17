@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 using MonMoose.Core.Structure;
 
@@ -342,31 +343,58 @@ namespace MonMoose.Core.DataExporter
             m_context.stopwatchCollector.Stop();
         }
 
+        //private void RunProtoc()
+        //{
+        //    m_context.stopwatchCollector.Start("RunProtoc");
+        //    StringBuilder sb = new StringBuilder();
+        //    int index = 0;
+        //    for (int i = 0; i < m_ilPathList.Count; ++i)
+        //    {
+        //        index++;
+        //        string ilPath = m_ilPathList[i];
+        //        if (index != 0)
+        //        {
+        //            sb.Append(" ");
+        //        }
+        //        sb.Append(ilPath);
+        //        if (sb.Length > (1<<15) - 1000 || i == m_ilPathList.Count -1)
+        //        {
+        //            string argStr = string.Format("--proto_path={2} --csharp_out={0} {1}", m_context.structureExportFolderPath, sb, m_context.ilExportFolderPath);
+        //            string errorMsg;
+        //            if (!RunExe(m_context.structureExporterPath, argStr, out errorMsg))
+        //            {
+        //                throw new Exception(errorMsg);
+        //            }
+        //            index = 0;
+        //            sb = new StringBuilder();
+        //        }
+        //    }
+        //    m_context.stopwatchCollector.Stop();
+        //}
+
         private void RunProtoc()
         {
             m_context.stopwatchCollector.Start("RunProtoc");
+            string cmdFilePath = FilePathUtility.GetPath(EFilePathSlashType.RightDown, m_context.tempFileFolderPath, "proto.txt");
             StringBuilder sb = new StringBuilder();
-            int index = 0;
-            for (int i = 0; i < m_ilPathList.Count; ++i)
+            m_ilPathList.Sort();
+            foreach (var ilPath in m_ilPathList)
             {
-                index++;
-                string ilPath = m_ilPathList[i];
-                if (index != 0)
-                {
-                    sb.Append(" ");
-                }
+                //sb.Append("./");
+                //sb.Append(FilePathUtility.GetFileName(ilPath));
+                //sb.Append(" ");
                 sb.Append(ilPath);
-                if (sb.Length > (1<<15) - 1000 || i == m_ilPathList.Count -1)
-                {
-                    string argStr = string.Format("--proto_path={2} --csharp_out={0} {1}", m_context.structureExportFolderPath, sb, m_context.ilExportFolderPath);
-                    string errorMsg;
-                    if (!RunExe(m_context.structureExporterPath, argStr, out errorMsg))
-                    {
-                        throw new Exception(errorMsg);
-                    }
-                    index = 0;
-                    sb = new StringBuilder();
-                }
+                sb.Append("\r\n");
+            }
+            File.WriteAllText(cmdFilePath, sb.ToString());
+            //string exePath = FilePathUtility.GetPath(m_context.ilExportFolderPath, "protoc.exe");
+            //File.Copy(m_context.structureExportFolderPath, exePath);
+            string argStr = string.Format("--proto_path={2} --csharp_out={0} @{1}", m_context.structureExportFolderPath, cmdFilePath, m_context.ilExportFolderPath);
+            //string argStr = string.Format("@{0} --csharp_out={1}", cmdFilePath, m_context.structureExportFolderPath);
+            string errorMsg;
+            if (!RunExe(m_context.structureExporterPath, argStr, out errorMsg))
+            {
+                throw new Exception(errorMsg);
             }
             m_context.stopwatchCollector.Stop();
         }

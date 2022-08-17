@@ -8,6 +8,7 @@ namespace MonMoose.Core.DataExporter
         public string namespaceStr;
         public string prefixStr;
         public string postfixStr;
+        public string tempFileFolderPath;
         public string structureExportFolderPath;
         public string ilExportFolderPath;
         public string structureExporterPath;
