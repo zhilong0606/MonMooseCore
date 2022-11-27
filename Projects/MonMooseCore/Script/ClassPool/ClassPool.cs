@@ -53,7 +53,22 @@ namespace MonMoose.Core
             }
         }
 
+        public object Fetch()
+        {
+            return Fetch(-1, null);
+        }
+
+        public object Fetch(int checkPointId)
+        {
+            return Fetch(checkPointId, null);
+        }
+
         public object Fetch(object causer)
+        {
+            return Fetch(-1, causer);
+        }
+
+        public object Fetch(int checkPointId, object causer)
         {
             object obj;
             lock (this)
@@ -71,6 +86,7 @@ namespace MonMoose.Core
                 {
                     PoolObjHolder holder = CreateNew();
                     holder.isUsing = true;
+                    holder.checkPointId = checkPointId;
                     m_holderList.Add(holder);
                     obj = holder.obj;
                 }
@@ -78,6 +94,7 @@ namespace MonMoose.Core
                 {
                     PoolObjHolder holder = m_holderList[holderIndex];
                     holder.isUsing = true;
+                    holder.checkPointId = checkPointId;
                     m_holderList[holderIndex] = holder;
                     obj = holder.obj;
 
@@ -86,6 +103,7 @@ namespace MonMoose.Core
             IClassPoolObj poolObj = obj as IClassPoolObj;
             if (poolObj != null)
             {
+                poolObj.checkPointId = checkPointId;
                 SetCauser(poolObj, causer);
                 poolObj.OnFetch();
             }
@@ -187,6 +205,7 @@ namespace MonMoose.Core
         {
             public object obj;
             public bool isUsing;
+            public int checkPointId;
         }
     }
 }

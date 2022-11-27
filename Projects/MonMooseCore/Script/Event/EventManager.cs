@@ -124,7 +124,7 @@ namespace MonMoose.Core
                 EventBlockGroup group = GetBlockGroupByEventId(eventId);
                 if (group != null && group.isBlocked)
                 {
-                    EventGroup.Params prms = ClassPoolManager.instance.Fetch<EventGroup.Params>(this);
+                    EventGroup.Params prms = ClassPoolManager.instance.Fetch<EventGroup.Params>();
                     prms.Set(eventGroup);
                     group.AddParams(prms);
                 }
@@ -143,7 +143,7 @@ namespace MonMoose.Core
                 EventBlockGroup group = GetBlockGroupByEventId(eventId);
                 if (group != null && group.isBlocked)
                 {
-                    EventGroup<T0>.Params prms = ClassPoolManager.instance.Fetch<EventGroup<T0>.Params>(this);
+                    EventGroup<T0>.Params prms = ClassPoolManager.instance.Fetch<EventGroup<T0>.Params>();
                     prms.Set(eventGroup, arg0);
                     group.AddParams(prms);
                 }
@@ -162,7 +162,7 @@ namespace MonMoose.Core
                 EventBlockGroup group = GetBlockGroupByEventId(eventId);
                 if (group != null && group.isBlocked)
                 {
-                    EventGroup<T0, T1>.Params prms = ClassPoolManager.instance.Fetch<EventGroup<T0, T1>.Params>(this);
+                    EventGroup<T0, T1>.Params prms = ClassPoolManager.instance.Fetch<EventGroup<T0, T1>.Params>();
                     prms.Set(eventGroup, arg0, arg1);
                     group.AddParams(prms);
                 }
@@ -181,7 +181,7 @@ namespace MonMoose.Core
                 EventBlockGroup group = GetBlockGroupByEventId(eventId);
                 if (group != null && group.isBlocked)
                 {
-                    EventGroup<T0, T1, T2>.Params prms = ClassPoolManager.instance.Fetch<EventGroup<T0, T1, T2>.Params>(this);
+                    EventGroup<T0, T1, T2>.Params prms = ClassPoolManager.instance.Fetch<EventGroup<T0, T1, T2>.Params>();
                     prms.Set(eventGroup, arg0, arg1, arg2);
                     group.AddParams(prms);
                 }
@@ -200,7 +200,7 @@ namespace MonMoose.Core
                 EventBlockGroup group = GetBlockGroupByEventId(eventId);
                 if (group != null && group.isBlocked)
                 {
-                    EventGroup<T0, T1, T2, T3>.Params prms = ClassPoolManager.instance.Fetch<EventGroup<T0, T1, T2, T3>.Params>(this);
+                    EventGroup<T0, T1, T2, T3>.Params prms = ClassPoolManager.instance.Fetch<EventGroup<T0, T1, T2, T3>.Params>();
                     prms.Set(eventGroup, arg0, arg1, arg2, arg3);
                     group.AddParams(prms);
                 }
@@ -257,10 +257,9 @@ namespace MonMoose.Core
                 m_eventGroupMap.Add(eventId, group);
             }
             T ret = group as T;
-            if (ret == null)
+            if (group != null && ret == null)
             {
                 DebugUtility.LogError(string.Format("Error: {0} Has More Than One ParamGroups!!!", eventId));
-                return null;
             }
             return ret;
         }

@@ -11,7 +11,7 @@ namespace MonMoose.Core
         protected override void OnInit()
         {
             base.OnInit();
-            m_process = ClassPoolManager.instance.Fetch<SequenceProcess>(this);
+            m_process = ClassPoolManager.instance.Fetch<SequenceProcess>(checkPointId);
             OnInitProcess(m_process);
         }
 

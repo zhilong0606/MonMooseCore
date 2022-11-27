@@ -28,21 +28,21 @@
 
         public static ConditionOr operator |(ConditionBase c1, ConditionBase c2)
         {
-            ConditionOr c = ClassPoolManager.instance.Fetch<ConditionOr>(typeof(ConditionBase));
+            ConditionOr c = ClassPoolManager.instance.Fetch<ConditionOr>(c1.checkPointId);
             c.Init(c1, c2);
             return c;
         }
 
         public static ConditionAnd operator &(ConditionBase c1, ConditionBase c2)
         {
-            ConditionAnd c = ClassPoolManager.instance.Fetch<ConditionAnd>(typeof(ConditionBase));
+            ConditionAnd c = ClassPoolManager.instance.Fetch<ConditionAnd>(c1.checkPointId);
             c.Init(c1, c2);
             return c;
         }
 
         public static ConditionNot operator !(ConditionBase c1)
         {
-            ConditionNot c = ClassPoolManager.instance.Fetch<ConditionNot>(typeof(ConditionBase));
+            ConditionNot c = ClassPoolManager.instance.Fetch<ConditionNot>(c1.checkPointId);
             c.Init(c1);
             return c;
         }

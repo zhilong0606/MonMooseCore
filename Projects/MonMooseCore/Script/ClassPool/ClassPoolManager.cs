@@ -8,24 +8,76 @@ namespace MonMoose.Core
     {
         private Dictionary<Type, ClassPool> m_poolMap = new Dictionary<Type, ClassPool>();
 
-        //尽量填causer，static类的话填Type，其他填this
+        public T Fetch<T>() where T : class
+        {
+            ClassPool pool = GetPool(typeof(T));
+            return pool.Fetch() as T;
+        }
+
+        public T Fetch<T>(int checkPointId) where T : class
+        {
+            ClassPool pool = GetPool(typeof(T));
+            return pool.Fetch(checkPointId) as T;
+        }
+
         public T Fetch<T>(object causer) where T : class
         {
             ClassPool pool = GetPool(typeof(T));
             return pool.Fetch(causer) as T;
         }
 
-        //尽量填causer，static类的话填Type，其他填this
+        public T Fetch<T>(int checkPointId, object causer) where T : class
+        {
+            ClassPool pool = GetPool(typeof(T));
+            return pool.Fetch(checkPointId, causer) as T;
+        }
+
+        public object Fetch(Type type)
+        {
+            ClassPool pool = GetPool(type);
+            return pool.Fetch();
+        }
+
+        public object Fetch(Type type, int checkPointId)
+        {
+            ClassPool pool = GetPool(type);
+            return pool.Fetch(checkPointId);
+        }
+
         public object Fetch(Type type, object causer)
         {
             ClassPool pool = GetPool(type);
             return pool.Fetch(causer);
         }
 
+        public object Fetch(Type type, int checkPointId, object causer)
+        {
+            ClassPool pool = GetPool(type);
+            return pool.Fetch(checkPointId, causer);
+        }
+
+        public List<T> FetchList<T>()
+        {
+            ClassPool pool = GetPool(typeof(List<T>));
+            return pool.Fetch() as List<T>;
+        }
+
+        public List<T> FetchList<T>(int checkPointId)
+        {
+            ClassPool pool = GetPool(typeof(List<T>));
+            return pool.Fetch(checkPointId) as List<T>;
+        }
+
         public List<T> FetchList<T>(object causer)
         {
             ClassPool pool = GetPool(typeof(List<T>));
             return pool.Fetch(causer) as List<T>;
+        }
+
+        public List<T> FetchList<T>(int checkPointId, object causer)
+        {
+            ClassPool pool = GetPool(typeof(List<T>));
+            return pool.Fetch(checkPointId, causer) as List<T>;
         }
 
         public void Release(object obj)

@@ -125,7 +125,7 @@ namespace MonMoose.Core
             {
                 if (m_timer == null)
                 {
-                    m_timer = ClassPoolManager.instance.Fetch<Timer>(this);
+                    m_timer = ClassPoolManager.instance.Fetch<Timer>(checkPointId);
                 }
                 m_timer.Start(time, OnTimeUp);
             }

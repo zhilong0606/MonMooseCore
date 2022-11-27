@@ -51,7 +51,7 @@ namespace MonMoose.Core
         {
             if (pool != null)
             {
-                return pool.Fetch(this) as Timer;
+                return pool.Fetch() as Timer;
             }
             return new Timer();
         }
