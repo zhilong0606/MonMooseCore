@@ -139,6 +139,5 @@
     <Compile Include="Script\Utility\File\Writer\FileWriterBlockItemLineStringBuilder.cs" />
     <Compile Include="Script\Utility\Type\TypeMethodUtility.cs" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

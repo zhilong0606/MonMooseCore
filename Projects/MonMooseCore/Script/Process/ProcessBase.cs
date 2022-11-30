@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace MonMoose.Core
 {
@@ -8,6 +9,9 @@ namespace MonMoose.Core
     {
         private ProcessStateId m_state;
         private Timer m_timer;
+#if !RELEASE
+        private Dictionary<int, StackTrace> m_stackTraceMap = new Dictionary<int, StackTrace>();
+#endif
 
         public Action<ProcessBase> actionOnEnd;
 
@@ -29,8 +33,15 @@ namespace MonMoose.Core
             if (m_state != ProcessStateId.None && m_state != ProcessStateId.UnInited)
             {
                 DebugUtility.LogError("Cannot Init Process state is " + m_state);
+#if !RELEASE
+                DebugUtility.LogError("[ProcessBase] " + m_stackTraceMap[(int)ProcessStateId.Inited]);
+                DebugUtility.LogError("[ProcessBase] " + new StackTrace());
+#endif
                 return;
             }
+#if !RELEASE
+            m_stackTraceMap.Add((int)ProcessStateId.Inited, new StackTrace());
+#endif
             m_state = ProcessStateId.Inited;
             OnInit();
         }
@@ -40,8 +51,15 @@ namespace MonMoose.Core
             if (!canUnInit)
             {
                 DebugUtility.LogError("Cannot UnInit Process state is " + m_state);
+#if !RELEASE
+                DebugUtility.LogError("[ProcessBase] " + m_stackTraceMap[(int)ProcessStateId.UnInited]);
+                DebugUtility.LogError("[ProcessBase] " + new StackTrace());
+#endif
                 return;
             }
+#if !RELEASE
+            m_stackTraceMap.Add((int)ProcessStateId.UnInited, new StackTrace());
+#endif
             m_state = ProcessStateId.UnInited;
             OnUnInit();
         }
@@ -51,8 +69,15 @@ namespace MonMoose.Core
             if (m_state != ProcessStateId.Inited)
             {
                 DebugUtility.LogError("Cannot Start Process state is " + m_state);
+#if !RELEASE
+                DebugUtility.LogError("[ProcessBase] " + m_stackTraceMap[(int)ProcessStateId.Started]);
+                DebugUtility.LogError("[ProcessBase] " + new StackTrace());
+#endif
                 return;
             }
+#if !RELEASE
+            m_stackTraceMap.Add((int)ProcessStateId.Started, new StackTrace());
+#endif
             m_state = ProcessStateId.Started;
             OnStart();
         }
@@ -74,8 +99,15 @@ namespace MonMoose.Core
             if (m_state != ProcessStateId.Inited && m_state != ProcessStateId.Started)
             {
                 DebugUtility.LogError("Cannot End Process state is " + m_state);
+#if !RELEASE
+                DebugUtility.LogError("[ProcessBase] " + m_stackTraceMap[(int)ProcessStateId.Ended]);
+                DebugUtility.LogError("[ProcessBase] " + new StackTrace());
+#endif
                 return;
             }
+#if !RELEASE
+            m_stackTraceMap.Add((int)ProcessStateId.Ended, new StackTrace());
+#endif
             m_state = ProcessStateId.Ended;
             OnEnd();
             if (actionOnEnd != null)
@@ -171,6 +203,7 @@ namespace MonMoose.Core
                 UnInit();
             }
             actionOnEnd = null;
+            m_stackTraceMap.Clear();
             m_state = ProcessStateId.None;
             if (m_timer != null)
             {
