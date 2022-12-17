@@ -8,76 +8,15 @@ namespace MonMoose.Core
     {
         private Dictionary<Type, ClassPool> m_poolMap = new Dictionary<Type, ClassPool>();
 
-        public T Fetch<T>() where T : class
+        public T Fetch<T>(Func<Type, object> funcOnCreate = null) where T : class
         {
-            ClassPool pool = GetPool(typeof(T));
-            return pool.Fetch() as T;
+            return Fetch(typeof(T), funcOnCreate) as T;
         }
 
-        public T Fetch<T>(int checkPointId) where T : class
-        {
-            ClassPool pool = GetPool(typeof(T));
-            return pool.Fetch(checkPointId) as T;
-        }
-
-        public T Fetch<T>(object causer) where T : class
-        {
-            ClassPool pool = GetPool(typeof(T));
-            return pool.Fetch(causer) as T;
-        }
-
-        public T Fetch<T>(int checkPointId, object causer) where T : class
-        {
-            ClassPool pool = GetPool(typeof(T));
-            return pool.Fetch(checkPointId, causer) as T;
-        }
-
-        public object Fetch(Type type)
+        public object Fetch(Type type, Func<Type, object> funcOnCreate = null)
         {
             ClassPool pool = GetPool(type);
-            return pool.Fetch();
-        }
-
-        public object Fetch(Type type, int checkPointId)
-        {
-            ClassPool pool = GetPool(type);
-            return pool.Fetch(checkPointId);
-        }
-
-        public object Fetch(Type type, object causer)
-        {
-            ClassPool pool = GetPool(type);
-            return pool.Fetch(causer);
-        }
-
-        public object Fetch(Type type, int checkPointId, object causer)
-        {
-            ClassPool pool = GetPool(type);
-            return pool.Fetch(checkPointId, causer);
-        }
-
-        public List<T> FetchList<T>()
-        {
-            ClassPool pool = GetPool(typeof(List<T>));
-            return pool.Fetch() as List<T>;
-        }
-
-        public List<T> FetchList<T>(int checkPointId)
-        {
-            ClassPool pool = GetPool(typeof(List<T>));
-            return pool.Fetch(checkPointId) as List<T>;
-        }
-
-        public List<T> FetchList<T>(object causer)
-        {
-            ClassPool pool = GetPool(typeof(List<T>));
-            return pool.Fetch(causer) as List<T>;
-        }
-
-        public List<T> FetchList<T>(int checkPointId, object causer)
-        {
-            ClassPool pool = GetPool(typeof(List<T>));
-            return pool.Fetch(checkPointId, causer) as List<T>;
+            return pool.Fetch(funcOnCreate);
         }
 
         public void Release(object obj)
@@ -86,7 +25,16 @@ namespace MonMoose.Core
             {
                 return;
             }
-            ClassPool pool = GetPool(obj.GetType());
+            IClassPoolObj poolObj = obj as IClassPoolObj;
+            ClassPool pool = null;
+            if (poolObj != null)
+            {
+                pool = poolObj.creator;
+            }
+            if (pool == null)
+            {
+                pool = GetPool(obj.GetType());
+            }
             pool.Release(obj);
         }
 
@@ -99,34 +47,34 @@ namespace MonMoose.Core
             }
         }
 
-        public void SetCapacity(Type type, int capacity)
+        public void SetCapacity(Type type, int capacity, Func<Type, object> actionOnCreate = null)
         {
             ClassPool pool = GetPool(type);
-            pool.capacity = capacity;
+            pool.SetCapacity(capacity, actionOnCreate);
         }
 
-        public void RegisterOnFetch(Type type, ClassPool.DelegateObject action)
+        public void RegisterActionOnFetch(Type type, Action<object> action)
         {
             ClassPool pool = GetPool(type);
-            pool.actionOnFetch += action;
+            pool.RegisterActionOnFetch(action);
         }
 
-        public void UnRegisterOnFetch(Type type, ClassPool.DelegateObject action)
+        public void UnRegisterActionOnFetch(Type type, Action<object> action)
         {
             ClassPool pool = GetPool(type);
-            pool.actionOnFetch -= action;
+            pool.UnRegisterActionOnFetch(action);
         }
 
-        public void RegisterOnRelease(Type type, ClassPool.DelegateObject action)
+        public void RegisterActionOnRelease(Type type, Action<object> action)
         {
             ClassPool pool = GetPool(type);
-            pool.actionOnRelease += action;
+            pool.RegisterActionOnRelease(action);
         }
 
-        public void UnRegisterOnRelease(Type type, ClassPool.DelegateObject action)
+        public void UnRegisterActionOnRelease(Type type, Action<object> action)
         {
             ClassPool pool = GetPool(type);
-            pool.actionOnRelease -= action;
+            pool.UnRegisterActionOnRelease(action);
         }
 
         public ClassPool GetPool(Type type)

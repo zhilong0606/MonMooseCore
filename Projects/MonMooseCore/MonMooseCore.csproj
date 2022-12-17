@@ -104,6 +104,7 @@
     <Compile Include="Script\Observer\IObserveSubject.cs" />
     <Compile Include="Script\Other\ActionPriorityInvoker.cs" />
     <Compile Include="Script\Other\PriorityInvoker.cs" />
+    <Compile Include="Script\Other\PriorityStack.cs" />
     <Compile Include="Script\Process\CollectionProcess.cs" />
     <Compile Include="Script\Process\ParallelProcess.cs" />
     <Compile Include="Script\Process\ProcessBase.cs" />

@@ -6,7 +6,7 @@ namespace MonMoose.Core
     public class FileWriter : FileWriterBlockItemBlock
     {
         private string m_lineEndStr = "\r\n";
-        private string m_tabStr = "\t";
+        private string m_tabStr = "    ";
 
         public FileWriter()
             : base(0)

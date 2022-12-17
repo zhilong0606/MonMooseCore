@@ -114,7 +114,8 @@ namespace MonMoose.Core
 
         private ConditionBool NewValue()
         {
-            ConditionBool condition = ClassPoolManager.instance.Fetch<ConditionBool>(checkPointId);
+            ConditionBool condition = ClassPoolManager.instance.Fetch<ConditionBool>();
+            condition.checkPointId = checkPointId;
             InitValue(condition);
             return condition;
         }

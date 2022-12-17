@@ -1,74 +1,51 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace MonMoose.Core
 {
     public class ClassPool
     {
-        public delegate void DelegateObject(object obj);
-        public event DelegateObject actionOnFetch;
-        public event DelegateObject actionOnRelease;
+        private List<Action<object>> m_actionOnFetchList = new List<Action<object>>();
+        private List<Action<object>> m_actionOnReleaseList = new List<Action<object>>();
 
         private List<PoolObjHolder> m_holderList = new List<PoolObjHolder>();
         private Type m_classType;
-        private int m_initCapacity = 4;
 
         public virtual Type classType
         {
             get { return m_classType; }
         }
 
-        public void Init(Type type, int initCapacity = 0)
+        public void Init(Type type)
         {
             m_classType = type;
-            if (initCapacity > 0)
-            {
-                m_initCapacity = initCapacity;
-            }
-            capacity = m_initCapacity;
         }
 
-        public int capacity
+        public int GetCapacity()
         {
-            get
+            lock (this)
             {
-                lock (this)
-                {
-                    return m_holderList.Count;
-                }
+                return m_holderList.Count;
             }
-            set
+        }
+
+        public void SetCapacity(int capacity, Func<Type, object> funcOnCreate = null)
+        {
+            lock (this)
             {
-                lock (this)
+                if (capacity > m_holderList.Count)
                 {
-                    if (value > m_holderList.Count)
+                    m_holderList.Capacity = capacity;
+                    for (int i = m_holderList.Count; i < capacity; ++i)
                     {
-                        m_holderList.Capacity = value;
-                        for (int i = 0; i < value; ++i)
-                        {
-                            m_holderList.Add(CreateNew());
-                        }
+                        m_holderList.Add(CreateNew(funcOnCreate));
                     }
                 }
             }
         }
 
-        public object Fetch()
-        {
-            return Fetch(-1, null);
-        }
-
-        public object Fetch(int checkPointId)
-        {
-            return Fetch(checkPointId, null);
-        }
-
-        public object Fetch(object causer)
-        {
-            return Fetch(-1, causer);
-        }
-
-        public object Fetch(int checkPointId, object causer)
+        public object Fetch(Func<Type, object> funcOnCreate = null)
         {
             object obj;
             lock (this)
@@ -84,9 +61,8 @@ namespace MonMoose.Core
                 }
                 if (holderIndex < 0)
                 {
-                    PoolObjHolder holder = CreateNew();
+                    PoolObjHolder holder = CreateNew(funcOnCreate);
                     holder.isUsing = true;
-                    holder.checkPointId = checkPointId;
                     m_holderList.Add(holder);
                     obj = holder.obj;
                 }
@@ -94,7 +70,6 @@ namespace MonMoose.Core
                 {
                     PoolObjHolder holder = m_holderList[holderIndex];
                     holder.isUsing = true;
-                    holder.checkPointId = checkPointId;
                     m_holderList[holderIndex] = holder;
                     obj = holder.obj;
 
@@ -103,8 +78,6 @@ namespace MonMoose.Core
             IClassPoolObj poolObj = obj as IClassPoolObj;
             if (poolObj != null)
             {
-                poolObj.checkPointId = checkPointId;
-                SetCauser(poolObj, causer);
                 poolObj.OnFetch();
             }
             OnFetch(obj);
@@ -137,11 +110,56 @@ namespace MonMoose.Core
             IClassPoolObj poolObj = obj as IClassPoolObj;
             if (poolObj != null)
             {
-                SetCauser(poolObj, null);
                 poolObj.OnRelease();
             }
             OnRelease(obj);
             NotifyOnRelease(obj);
+        }
+
+        public void RegisterActionOnFetch(Action<object> actionOnFetch)
+        {
+            if (actionOnFetch.Target != null)
+            {
+                DebugUtility.LogError("[ClassPool] Cannot Register ActionOnFetch is not Static");
+                return;
+            }
+            if (m_actionOnFetchList.Contains(actionOnFetch))
+            {
+                return;
+            }
+            m_actionOnFetchList.Add(actionOnFetch);
+        }
+
+        public void UnRegisterActionOnFetch(Action<object> actionOnFetch)
+        {
+            if (!m_actionOnFetchList.Contains(actionOnFetch))
+            {
+                return;
+            }
+            m_actionOnFetchList.Remove(actionOnFetch);
+        }
+
+        public void RegisterActionOnRelease(Action<object> actionOnRelease)
+        {
+            if (actionOnRelease.Target != null)
+            {
+                DebugUtility.LogError("[ClassPool] Cannot Register ActionOnRelease is not Static");
+                return;
+            }
+            if (m_actionOnReleaseList.Contains(actionOnRelease))
+            {
+                return;
+            }
+            m_actionOnReleaseList.Add(actionOnRelease);
+        }
+
+        public void UnRegisterActionOnRelease(Action<object> actionOnRelease)
+        {
+            if (!m_actionOnReleaseList.Contains(actionOnRelease))
+            {
+                return;
+            }
+            m_actionOnReleaseList.Remove(actionOnRelease);
         }
 
         public void Clear()
@@ -158,15 +176,22 @@ namespace MonMoose.Core
                 }
                 m_holderList.Clear();
             }
-            capacity = m_initCapacity;
         }
 
         protected virtual void OnFetch(object obj) { }
         protected virtual void OnRelease(object obj) { }
 
-        private PoolObjHolder CreateNew()
+        private PoolObjHolder CreateNew(Func<Type, object> funcOnCreate)
         {
-            object obj = Activator.CreateInstance(classType);
+            object obj = null;
+            if (funcOnCreate != null)
+            {
+                obj = funcOnCreate(m_classType);
+            }
+            if (obj == null)
+            {
+                obj = Activator.CreateInstance(classType);
+            }
             IClassPoolObj poolObj = obj as IClassPoolObj;
             if (poolObj != null)
             {
@@ -178,26 +203,33 @@ namespace MonMoose.Core
             return holder;
         }
 
-        private void SetCauser(IClassPoolObj poolObj, object causer)
-        {
-#if !RELEASE
-            poolObj.causer = causer;
-#endif
-        }
-
         private void NotifyOnFetch(object obj)
         {
-            if (actionOnFetch != null)
+            for (int i = 0; i < m_actionOnFetchList.Count; ++i)
             {
-                actionOnFetch(obj);
+                try
+                {
+                    m_actionOnFetchList[i].Invoke(obj);
+                }
+                catch (Exception e)
+                {
+                    DebugUtility.LogError(e.ToString());
+                }
             }
         }
 
         private void NotifyOnRelease(object obj)
         {
-            if (actionOnRelease != null)
+            for (int i = 0; i < m_actionOnReleaseList.Count; ++i)
             {
-                actionOnRelease(obj);
+                try
+                {
+                    m_actionOnReleaseList[i].Invoke(obj);
+                }
+                catch (Exception e)
+                {
+                    DebugUtility.LogError(e.ToString());
+                }
             }
         }
 

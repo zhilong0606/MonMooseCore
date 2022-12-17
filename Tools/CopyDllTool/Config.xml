@@ -6,7 +6,7 @@
     <dllName>MonMooseCore</dllName>
     <destFolderPathList>../../../ExcelDataExporter/ExcelDataExporter/Plugin</destFolderPathList>
     <destFolderPathList>../../../DramaGraph/DramaGraph/Assets/Plugins/MonMoose</destFolderPathList>
-    <destFolderPathList>../../../MonMoose/MonMoose/Assets/Scripts/BaseCore</destFolderPathList>
+    <destFolderPathList>../../../MonMoose/MonMoose/Assets/Assemblies/BaseCore</destFolderPathList>
   </itemList>
   <itemList>
     <enabled>true</enabled>
