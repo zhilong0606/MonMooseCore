@@ -98,5 +98,20 @@ namespace MonMoose.Core
             }
             return pool;
         }
+
+        public void LogOutPoolUsingCount()
+        {
+            DebugUtility.Log("[LogOutPool] LogOutPoolUsingCount Start");
+            foreach (var kv in m_poolMap)
+            {
+                int count = kv.Value.usingCount;
+                if (count > 0)
+                {
+                    string name = kv.Value.poolName;
+                    DebugUtility.Log(string.Format("[LogOutPool] LogOutPoolUsingCount: {0} : {1}", name, count));
+                }
+            }
+            DebugUtility.Log("[LogOutPool] LogOutPoolUsingCount End");
+        }
     }
 }

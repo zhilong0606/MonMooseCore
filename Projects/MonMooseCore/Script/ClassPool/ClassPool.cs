@@ -10,11 +10,32 @@ namespace MonMoose.Core
         private List<Action<object>> m_actionOnReleaseList = new List<Action<object>>();
 
         private List<PoolObjHolder> m_holderList = new List<PoolObjHolder>();
-        private Type m_classType;
+        protected Type m_classType;
 
         public virtual Type classType
         {
             get { return m_classType; }
+        }
+
+        public virtual string poolName
+        {
+            get { return m_classType.Name; }
+        }
+
+        public int usingCount
+        {
+            get
+            {
+                int count = 0;
+                for (int i = 0; i < m_holderList.Count; ++i)
+                {
+                    if (m_holderList[i].isUsing)
+                    {
+                        count++;
+                    }
+                }
+                return count;
+            }
         }
 
         public void Init(Type type)
