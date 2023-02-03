@@ -47,13 +47,22 @@ namespace MonMoose.Core
             return timer;
         }
 
-        private Timer CreateTimer()
+        private Timer CreateTimer(int id)
         {
+            Timer timer = null;
             if (pool != null)
             {
-                return pool.Fetch() as Timer;
+                timer = pool.Fetch() as Timer;
             }
-            return new Timer();
+            else
+            {
+                timer = new Timer();
+            }
+            if (timer != null)
+            {
+                timer.id = id;
+            }
+            return timer;
         }
 
         private Timer AddTimer(int id)
@@ -63,13 +72,13 @@ namespace MonMoose.Core
             {
                 if (m_timerMap[id] == null)
                 {
-                    timer = CreateTimer();
+                    timer = CreateTimer(id);
                     m_timerMap[id] = timer;
                 }
             }
             else
             {
-                timer = CreateTimer();
+                timer = CreateTimer(id);
                 m_timerMap.Add(id, timer);
             }
             if (timer != null)
@@ -94,7 +103,7 @@ namespace MonMoose.Core
                     onRemoveTimer(id);
                 }
                 timer.Release();
-                m_timerMap[id] = null;
+                m_timerMap.Remove(id);
             }
         }
 

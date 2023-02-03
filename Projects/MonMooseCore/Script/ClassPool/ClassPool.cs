@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace MonMoose.Core
 {
@@ -11,6 +12,7 @@ namespace MonMoose.Core
 
         private List<PoolObjHolder> m_holderList = new List<PoolObjHolder>();
         protected Type m_classType;
+        private static readonly Regex m_logRegex = new Regex(@"at\s+(\w*\.)*(\w+\.\w+)");
 
         public virtual Type classType
         {
@@ -100,6 +102,7 @@ namespace MonMoose.Core
             if (poolObj != null)
             {
                 poolObj.OnFetch();
+                RecordCreateStackTraceAndLog(poolObj);
             }
             OnFetch(obj);
             NotifyOnFetch(obj);
@@ -132,6 +135,8 @@ namespace MonMoose.Core
             if (poolObj != null)
             {
                 poolObj.OnRelease();
+                poolObj.stackTrace = null;
+                poolObj.createLog = null;
             }
             OnRelease(obj);
             NotifyOnRelease(obj);
@@ -252,6 +257,25 @@ namespace MonMoose.Core
                     DebugUtility.LogError(e.ToString());
                 }
             }
+        }
+
+        private void RecordCreateStackTraceAndLog(IClassPoolObj poolObj)
+        {
+#if !RELEASE && DEBUG_CLASSPOOL
+            System.Diagnostics.StackTrace stackTrace = new System.Diagnostics.StackTrace(true);
+            MatchCollection matchCollection = m_logRegex.Matches(stackTrace.ToString());
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            foreach (Match match in matchCollection)
+            {
+                if (sb.Length != 0)
+                {
+                    sb.Append("-->");
+                }
+                sb.Append(match.Groups[match.Groups.Count - 1].Value);
+            }
+            poolObj.stackTrace = stackTrace;
+            poolObj.createLog = sb.ToString();
+#endif
         }
 
         private struct PoolObjHolder

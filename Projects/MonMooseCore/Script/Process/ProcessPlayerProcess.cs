@@ -8,6 +8,13 @@ namespace MonMoose.Core
     {
         private SequenceProcess m_process;
 
+        public override void OnRelease()
+        {
+            m_process.Release();
+            m_process = null;
+            base.OnRelease();
+        }
+
         protected override void OnInit()
         {
             base.OnInit();
@@ -44,13 +51,6 @@ namespace MonMoose.Core
         protected override void OnTick(float deltaTime) 
         {
             m_process.Tick(deltaTime);
-        }
-
-        public override void OnRelease()
-        {
-            m_process.Release();
-            m_process = null;
-            base.OnRelease();
         }
 
         private void OnSubProcessEnd(ProcessBase process)

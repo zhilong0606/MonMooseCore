@@ -199,10 +199,10 @@ namespace MonMoose.Core
 
         public override void OnRelease()
         {
-            if (canUnInit)
-            {
-                UnInit();
-            }
+            //if (canUnInit)
+            //{
+            //    UnInit();
+            //}
             actionOnEnd = null;
             m_stackTraceMap.Clear();
             m_state = ProcessStateId.None;

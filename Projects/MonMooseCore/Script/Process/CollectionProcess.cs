@@ -21,6 +21,13 @@ namespace MonMoose.Core
             get { return m_subProcessList.Count > 0 && (funcOnCanStart == null || funcOnCanStart()); }
         }
 
+        public override void OnRelease()
+        {
+            m_subProcessList.ReleaseAll();
+            m_subProcessList.Clear();
+            base.OnRelease();
+        }
+
         public void AddProcess(T process)
         {
             if (process == null)
@@ -32,13 +39,6 @@ namespace MonMoose.Core
                 return;
             }
             m_subProcessList.Add(process);
-        }
-
-        public override void OnRelease()
-        {
-            m_subProcessList.ReleaseAll();
-            m_subProcessList.Clear();
-            base.OnRelease();
         }
 
         protected bool StartSubProcessAndCheckRunning(ProcessBase process)

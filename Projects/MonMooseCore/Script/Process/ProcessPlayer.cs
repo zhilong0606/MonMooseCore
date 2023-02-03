@@ -59,6 +59,7 @@ namespace MonMoose.Core
         private void OnProcessEnd(ProcessBase process)
         {
             process.UnInit();
+            process.Release();
             if (m_curProcess != process)
             {
                 DebugUtility.LogError("Cannot End ProcessBase which is not Current Process. Please Remove it or Skip it:");
@@ -93,6 +94,7 @@ namespace MonMoose.Core
                     break;
                 }
                 process.UnInit();
+                process.Release();
             }
             if (m_processList.Count == 0 && m_curProcess == null)
             {
