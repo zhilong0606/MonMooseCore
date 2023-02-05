@@ -40,7 +40,7 @@ namespace MonMoose.Core
                 return;
             }
 #if !RELEASE
-            m_stackTraceMap.Add((int)ProcessStateId.Inited, new StackTrace());
+            m_stackTraceMap[(int)ProcessStateId.Inited] = new StackTrace();
 #endif
             m_state = ProcessStateId.Inited;
             OnInit();
@@ -58,7 +58,7 @@ namespace MonMoose.Core
                 return;
             }
 #if !RELEASE
-            m_stackTraceMap.Add((int)ProcessStateId.UnInited, new StackTrace());
+            m_stackTraceMap[(int)ProcessStateId.UnInited] = new StackTrace();
 #endif
             m_state = ProcessStateId.UnInited;
             OnUnInit();
@@ -76,7 +76,7 @@ namespace MonMoose.Core
                 return;
             }
 #if !RELEASE
-            m_stackTraceMap.Add((int)ProcessStateId.Started, new StackTrace());
+            m_stackTraceMap[(int)ProcessStateId.Started] = new StackTrace();
 #endif
             m_state = ProcessStateId.Started;
             OnStart();
@@ -106,7 +106,7 @@ namespace MonMoose.Core
                 return;
             }
 #if !RELEASE
-            m_stackTraceMap.Add((int)ProcessStateId.Ended, new StackTrace());
+            m_stackTraceMap[(int)ProcessStateId.Ended] = new StackTrace();
 #endif
             m_state = ProcessStateId.Ended;
             OnEnd();
