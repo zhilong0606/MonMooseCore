@@ -109,6 +109,10 @@ namespace MonMoose.Core
         {
             m_isRoot = false;
             m_state = EState.None;
+            m_process = null;
+            m_actionOnFinish = null;
+            m_curStep = 0;
+            m_curSubIndex = 0;
             for (int i = 0; i < m_subList.Count; ++i)
             {
                 m_subList[i].Reset();
@@ -122,11 +126,11 @@ namespace MonMoose.Core
             {
                 TickManager.instance.UnRegisterGlobalTick(Tick);
             }
+            m_state = EState.Finish;
             if (m_actionOnFinish != null)
             {
                 m_actionOnFinish(this);
             }
-            m_state = EState.Finish;
         }
 
         private void InitializeInternal()

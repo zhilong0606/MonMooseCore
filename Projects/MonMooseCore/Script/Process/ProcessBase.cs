@@ -10,7 +10,16 @@ namespace MonMoose.Core
         private ProcessStateId m_state;
         private Timer m_timer;
 #if !RELEASE
+        private static int m_idCursor = 1;
+        private int m_id;
         private Dictionary<int, StackTrace> m_stackTraceMap = new Dictionary<int, StackTrace>();
+        private List<Tuple<string, StackTrace>> m_stackTraceLogList = new List<Tuple<string, StackTrace>>();
+        private ProcessBase m_parentProcess;
+
+        public ProcessBase()
+        {
+            m_id = m_idCursor++;
+        }
 #endif
 
         public Action<ProcessBase> actionOnEnd;
@@ -28,8 +37,27 @@ namespace MonMoose.Core
             get { return m_state != ProcessStateId.None && m_state != ProcessStateId.UnInited; }
         }
 
+        public override void OnRelease()
+        {
+            //if (canUnInit)
+            //{
+            //    UnInit();
+            //}
+            actionOnEnd = null;
+            m_parentProcess = null;
+            m_stackTraceLogList.Clear();
+            m_stackTraceMap.Clear();
+            m_state = ProcessStateId.None;
+            if (m_timer != null)
+            {
+                m_timer.Release();
+                m_timer = null;
+            }
+        }
+
         public void Init()
         {
+            AddStackTraceLog("Init");
             if (m_state != ProcessStateId.None && m_state != ProcessStateId.UnInited)
             {
                 DebugUtility.LogError("Cannot Init Process state is " + m_state);
@@ -48,6 +76,7 @@ namespace MonMoose.Core
 
         public void UnInit()
         {
+            AddStackTraceLog("UnInit");
             if (!canUnInit)
             {
                 DebugUtility.LogError("Cannot UnInit Process state is " + m_state);
@@ -66,6 +95,7 @@ namespace MonMoose.Core
 
         public void Start()
         {
+            AddStackTraceLog("Start");
             if (m_state != ProcessStateId.Inited)
             {
                 DebugUtility.LogError("Cannot Start Process state is " + m_state);
@@ -96,6 +126,7 @@ namespace MonMoose.Core
 
         public void End()
         {
+            AddStackTraceLog("End");
             if (m_state != ProcessStateId.Inited && m_state != ProcessStateId.Started)
             {
                 DebugUtility.LogError("Cannot End Process state is " + m_state);
@@ -120,6 +151,7 @@ namespace MonMoose.Core
 
         public void Pause()
         {
+            AddStackTraceLog("Pause");
             if (m_state != ProcessStateId.Started)
             {
                 DebugUtility.LogError("Cannot Pause Process state is " + m_state);
@@ -131,6 +163,7 @@ namespace MonMoose.Core
 
         public void Resume()
         {
+            AddStackTraceLog("Resume");
             if (m_state != ProcessStateId.Paused)
             {
                 DebugUtility.LogError("Cannot Resume Process state is " + m_state);
@@ -142,6 +175,7 @@ namespace MonMoose.Core
 
         public void Skip()
         {
+            AddStackTraceLog("Skip");
             if (m_state != ProcessStateId.Inited)
             {
                 DebugUtility.LogError("Cannot Skip Process state is " + m_state);
@@ -197,20 +231,18 @@ namespace MonMoose.Core
             OnTick(deltaTime);
         }
 
-        public override void OnRelease()
+        public void SetParent(ProcessBase parent)
         {
-            //if (canUnInit)
-            //{
-            //    UnInit();
-            //}
-            actionOnEnd = null;
-            m_stackTraceMap.Clear();
-            m_state = ProcessStateId.None;
-            if (m_timer != null)
-            {
-                m_timer.Release();
-                m_timer = null;
-            }
+#if !RELEASE
+            m_parentProcess = parent;
+#endif
+        }
+
+        private void AddStackTraceLog(string tag)
+        {
+#if !RELEASE
+            m_stackTraceLogList.Add(new Tuple<string, StackTrace>(tag, new StackTrace()));
+#endif
         }
 
         private void OnTimeUp()

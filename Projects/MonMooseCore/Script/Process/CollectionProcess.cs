@@ -38,6 +38,7 @@ namespace MonMoose.Core
             {
                 return;
             }
+            process.SetParent(this);
             m_subProcessList.Add(process);
         }
 

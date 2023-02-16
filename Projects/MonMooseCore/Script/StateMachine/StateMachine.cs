@@ -48,6 +48,15 @@ namespace MonMoose.Core
             m_curState = null;
         }
 
+        public void Reset()
+        {
+            m_curState = null;
+            for (int i = 0; i < m_stateList.Count; ++i)
+            {
+                m_stateList[i].Reset();
+            }
+        }
+
         public State GetState(int stateIndex)
         {
             for (int i = 0; i < m_stateList.Count; ++i)

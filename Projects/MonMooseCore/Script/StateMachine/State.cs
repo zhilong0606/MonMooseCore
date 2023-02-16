@@ -38,6 +38,12 @@
             m_isRunning = false;
         }
 
+        public void Reset()
+        {
+            OnReset();
+            m_isRunning = false;
+        }
+
         public void Tick(float deltaTime)
         {
             OnTick(deltaTime);
@@ -48,5 +54,6 @@
         protected virtual void OnEnter(StateContext context) { }
         protected virtual void OnExit() { }
         protected virtual void OnTick(float deltaTime) { }
+        protected virtual void OnReset() { }
     }
 }
