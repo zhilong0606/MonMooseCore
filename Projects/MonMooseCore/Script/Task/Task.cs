@@ -15,9 +15,9 @@ namespace MonMoose.Core
 
         public override void OnRelease()
         {
-            base.OnRelease();
             m_state = EState.None;
             actionOnEnd = null;
+            base.OnRelease();
         }
 
         public void Start()

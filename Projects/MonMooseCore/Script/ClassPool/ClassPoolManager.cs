@@ -45,6 +45,7 @@ namespace MonMoose.Core
             {
                 Release(objList[i]);
             }
+            objList.Clear();
         }
 
         public void SetCapacity(Type type, int capacity, Func<Type, object> actionOnCreate = null)

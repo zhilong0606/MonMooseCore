@@ -33,7 +33,7 @@ namespace MonMoose.Core
             do
             {
                 m_idCursor++;
-                if (m_idCursor <= 0)
+                if (m_idCursor == int.MaxValue)
                 {
                     m_idCursor = 1;
                 }

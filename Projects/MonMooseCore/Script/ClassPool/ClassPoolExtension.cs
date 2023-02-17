@@ -28,7 +28,10 @@ namespace MonMoose.Core
             int count = objList.Count;
             for (int i = 0; i < count; ++i)
             {
-                objList[i].Release();
+                if (objList[i] != null)
+                {
+                    objList[i].Release();
+                }
             }
             objList.Clear();
         }
@@ -42,8 +45,11 @@ namespace MonMoose.Core
             int count = objs.Length;
             for (int i = 0; i < count; ++i)
             {
-                objs[i].Release();
-                objs[i] = default(T);
+                if (objs[i] != null)
+                {
+                    objs[i].Release();
+                    objs[i] = default(T);
+                }
             }
         }
     }
