@@ -50,7 +50,7 @@ namespace MonMoose.Core
 
         private T m_preValue;
         private T m_curValue;
-        private Func<T, T, bool> m_equalFunc = EqualDefault;
+        private DelegateEqualFunc m_equalFunc = EqualDefault;
 
         private bool m_isValueChanged = false;
 
@@ -93,7 +93,7 @@ namespace MonMoose.Core
             Type t = typeof(T);
             if (m_equalFuncMap.ContainsKey(t))
             {
-                m_equalFunc = (Func<T, T, bool>)m_equalFuncMap[t];
+                m_equalFunc = (DelegateEqualFunc)m_equalFuncMap[t];
             }
         }
 
