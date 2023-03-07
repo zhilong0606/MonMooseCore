@@ -30,7 +30,7 @@ namespace MonMoose.Core
             }
         }
 
-        protected void End()
+        public void End()
         {
             if (m_stateId == StateId.Executing)
             {

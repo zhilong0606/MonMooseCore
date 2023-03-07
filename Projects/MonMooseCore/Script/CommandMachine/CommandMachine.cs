@@ -12,59 +12,76 @@ namespace MonMoose.Core
 
         public Action<bool> actionOnBusyStateChanged;
 
+        public Command topCommand
+        {
+            get { return m_curWrap != null ? m_curWrap.cmd : null; }
+        }
+
         public void Init()
         {
             m_isBusy.actionOnValueChanged = OnBusyStateChanged;
         }
 
-        public void PushCmd(Command cmd, Action<Command> actionOnEnd)
+        public void PushCommand(Command cmd, Action<Command> actionOnEnd)
         {
+            if(cmd == null)
+            {
+                return;
+            }
             CommandWrap wrap = ClassPoolManager.instance.Fetch<CommandWrap>();
             wrap.cmd = cmd;
-            wrap.actionOnCmdEnd = actionOnEnd;
+            wrap.actionOnCommandEnd = actionOnEnd;
             m_wrapList.Add(wrap);
-            TryExecuteNextCmd();
+            TryExecuteNextCommand();
         }
 
-        private void TryExecuteNextCmd()
+        public void ManualEndTopCommand()
+        {
+            if (m_curWrap != null)
+            {
+                m_curWrap.cmd.End();
+            }
+        }
+
+        private void TryExecuteNextCommand()
         {
             if (m_curWrap == null && m_wrapList.Count > 0)
             {
                 m_isBusy.curValue = true;
-                ExecuteNextCmd();
+                ExecuteNextCommand();
             }
         }
 
-        private void ExecuteNextCmd()
+        private void ExecuteNextCommand()
         {
             m_curWrap = m_wrapList[0];
             m_wrapList.RemoveAt(0);
-            m_curWrap.cmd.Execute(OnCmdExecuteEnd);
+            m_curWrap.cmd.Execute(OnCommandExecuteEnd);
         }
 
-        private void OnCmdExecuteEnd(Command cmd)
+        private void OnCommandExecuteEnd(Command cmd)
         {
             if(m_curWrap.cmd != cmd)
             {
-                DebugUtility.LogError("[CommandMachine] ExecuteNextCmd: Cannot End Cmd Not Cur");
+                DebugUtility.LogError("[CommandMachine] ExecuteNextCommand: Cannot End Command Not Cur");
                 return;
             }
             CommandWrap wrap = m_curWrap;
             m_curWrap = null;
-            if(wrap.actionOnCmdEnd != null)
+            if (wrap.actionOnCommandEnd != null)
             {
-                wrap.actionOnCmdEnd(cmd);
+                wrap.actionOnCommandEnd(wrap.cmd);
             }
             wrap.cmd.Release();
             wrap.cmd = null;
             wrap.Release();
-            if(m_wrapList.Count == 0)
+            if (m_wrapList.Count == 0)
             {
                 m_isBusy.curValue = false;
             }
             else
             {
-                ExecuteNextCmd();
+                ExecuteNextCommand();
             }
         }
 
@@ -84,13 +101,13 @@ namespace MonMoose.Core
         private class CommandWrap : ClassPoolObj
         {
             public Command cmd;
-            public Action<Command> actionOnCmdEnd;
+            public Action<Command> actionOnCommandEnd;
 
             public override void OnRelease()
             {
                 base.OnRelease();
                 cmd = null;
-                actionOnCmdEnd = null;
+                actionOnCommandEnd = null;
             }
         }
     }
