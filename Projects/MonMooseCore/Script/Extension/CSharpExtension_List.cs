@@ -24,6 +24,27 @@ namespace MonMoose.Core
             }
         }
 
+        public static void AddNotContainsNotNull<T>(this IList<T> l, T value)
+        {
+            if (value == null)
+            {
+                return;
+            }
+            AddNotContains(l, value);
+        }
+
+        public static void AddNotNull<T>(this IList<T> l, T value) where T : class
+        {
+            if (value == null)
+            {
+                return;
+            }
+            if (!l.Contains(value))
+            {
+                l.Add(value);
+            }
+        }
+
         public static bool CheckIndex(this IList list, int index)
         {
             return list != null && index >= 0 && index < list.Count;
