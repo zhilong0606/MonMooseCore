@@ -35,6 +35,7 @@ namespace MonMoose.Core
             if (m_stateId == StateId.Executing)
             {
                 m_stateId = StateId.End;
+                OnEnd();
                 NotifyEnd();
             }
             else
@@ -52,6 +53,8 @@ namespace MonMoose.Core
                 temp(this);
             }
         }
+
+        protected virtual void OnEnd() { }
 
         protected abstract void OnExecute();
 
