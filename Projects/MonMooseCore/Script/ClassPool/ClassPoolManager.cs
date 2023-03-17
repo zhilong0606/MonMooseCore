@@ -6,7 +6,7 @@ namespace MonMoose.Core
 {
     public class ClassPoolManager : Singleton<ClassPoolManager>
     {
-        private Dictionary<Type, ClassPool> m_poolMap = new Dictionary<Type, ClassPool>();
+        private List<ClassPool> m_poolList = new List<ClassPool>();
 
         public T Fetch<T>(Func<Type, object> funcOnCreate = null) where T : class
         {
@@ -83,7 +83,14 @@ namespace MonMoose.Core
             ClassPool pool = null;
             lock (this)
             {
-                if (!m_poolMap.TryGetValue(type, out pool))
+                for (int i = 0; i < m_poolList.Count; ++i)
+                {
+                    if (m_poolList[i].classType == type)
+                    {
+                        pool = m_poolList[i];
+                    }
+                }
+                if (pool == null)
                 {
                     if (typeof(IList).IsAssignableFrom(type))
                     {
@@ -94,7 +101,7 @@ namespace MonMoose.Core
                         pool = new ClassPool();
                     }
                     pool.Init(type);
-                    m_poolMap.Add(type, pool);
+                    m_poolList.Add(pool);
                 }
             }
             return pool;
@@ -103,12 +110,12 @@ namespace MonMoose.Core
         public void LogOutPoolUsingCount()
         {
             DebugUtility.Log("[LogOutPool] LogOutPoolUsingCount Start");
-            foreach (var kv in m_poolMap)
+            foreach (var kv in m_poolList)
             {
-                int count = kv.Value.usingCount;
+                int count = kv.usingCount;
                 if (count > 0)
                 {
-                    string name = kv.Value.poolName;
+                    string name = kv.poolName;
                     DebugUtility.Log(string.Format("[LogOutPool] LogOutPoolUsingCount: {0} : {1}", name, count));
                 }
             }
