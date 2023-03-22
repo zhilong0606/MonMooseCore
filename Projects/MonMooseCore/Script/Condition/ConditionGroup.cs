@@ -24,6 +24,16 @@ namespace MonMoose.Core
             }
         }
 
+        public override void OnRelease()
+        {
+            actionOnValueChanged = default;
+            m_values = default;
+            m_rootCondition = default;
+            m_cachedList.Clear();
+            m_checkDupList.Clear();
+            base.OnRelease();
+        }
+
         public void Resize(int count)
         {
             Clear();

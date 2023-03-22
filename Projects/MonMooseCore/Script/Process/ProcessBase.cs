@@ -48,6 +48,7 @@ namespace MonMoose.Core
             m_parentProcess = null;
             m_stackTraceLogList.Clear();
             m_stackTraceMap.Clear();
+            m_id = default;
 #endif
             m_state = ProcessStateId.None;
             if (m_timer != null)

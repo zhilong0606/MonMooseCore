@@ -4,6 +4,12 @@
     {
         private ConditionBase condition;
 
+        public override void OnRelease()
+        {
+            condition = default;
+            base.OnRelease();
+        }
+
         public void Init(ConditionBase c)
         {
             condition = c;

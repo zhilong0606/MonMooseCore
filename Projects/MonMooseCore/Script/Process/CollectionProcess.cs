@@ -23,6 +23,8 @@ namespace MonMoose.Core
 
         public override void OnRelease()
         {
+            funcOnCanStart = null;
+            actionOnSkip = null;
             m_subProcessList.ReleaseAll();
             m_subProcessList.Clear();
             base.OnRelease();

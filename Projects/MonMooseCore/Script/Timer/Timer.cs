@@ -77,6 +77,7 @@ namespace MonMoose.Core
 
         public override void OnRelease()
         {
+            m_targetTime = default;
             m_curTime = 0f;
             isFinished = true;
             isActive = false;

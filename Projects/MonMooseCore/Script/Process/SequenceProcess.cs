@@ -13,6 +13,12 @@ namespace MonMoose.Core
             get { return m_subProcessList.GetValueSafely(m_curIndex); }
         }
 
+        public override void OnRelease()
+        {
+            m_curIndex = default;
+            base.OnRelease();
+        }
+
         public void ProcessNext()
         {
             while (m_curIndex < m_subProcessList.Count)

@@ -17,6 +17,7 @@ namespace MonMoose.Core
         {
             m_state = EState.None;
             actionOnEnd = null;
+            actionOnRemove = null;
             base.OnRelease();
         }
 

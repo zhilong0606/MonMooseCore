@@ -16,9 +16,9 @@
             m_parent = null;
         }
 
-        public sealed override void OnRelease()
+        public override void OnRelease()
         {
-            Reset();
+            m_parent = default;
         }
 
         protected void Attach(ConditionBase child)

@@ -5,6 +5,13 @@
         private bool m_result;
         private bool m_isDirty;
 
+        public override void OnRelease()
+        {
+            m_result = default;
+            m_isDirty = default;
+            base.OnRelease();
+        }
+
         public sealed override bool Check()
         {
             if (m_isDirty)

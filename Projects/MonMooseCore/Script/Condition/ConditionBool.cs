@@ -8,6 +8,13 @@ namespace MonMoose.Core
 
         protected bool m_boolValue;
 
+        public override void OnRelease()
+        {
+            m_boolValue = default;
+            actionOnValueChanged = default;
+            base.OnRelease();
+        }
+
         public void SetValue(bool value, bool isSilent = false)
         {
             if (value != m_boolValue)

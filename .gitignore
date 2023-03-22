@@ -35,3 +35,8 @@ Tools/CopyDllTool/Project/*.user
 Tools/CopyDllTool/Project/.vs/
 Tools/CopyDllTool/Project/CopyDllTool/bin/
 Tools/CopyDllTool/Project/CopyDllTool/obj/
+
+Tools/CheckCodeTool/Project/*.user
+Tools/CheckCodeTool/Project/.vs/
+Tools/CheckCodeTool/Project/CheckCodeTool/bin/
+Tools/CheckCodeTool/Project/CheckCodeTool/obj/
