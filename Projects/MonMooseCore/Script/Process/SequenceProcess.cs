@@ -68,11 +68,11 @@ namespace MonMoose.Core
             }
         }
 
-        protected override void OnTick(float deltaTime)
+        protected override void OnTick(TimeSlice timeSlice)
         {
             if (curProcess != null)
             {
-                curProcess.Tick(deltaTime);
+                curProcess.Tick(timeSlice);
             }
         }
 

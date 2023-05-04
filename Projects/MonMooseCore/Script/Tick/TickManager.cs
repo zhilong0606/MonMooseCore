@@ -5,26 +5,26 @@ namespace MonMoose.Core
 {
     public class TickManager : Singleton<TickManager>
     {
-        private Dictionary<int, List<Action<float>>> m_globalTickListMap = new Dictionary<int, List<Action<float>>>();
+        private Dictionary<int, List<Action<TimeSlice>>> m_globalTickListMap = new Dictionary<int, List<Action<TimeSlice>>>();
         private Dictionary<int, TickProcess> m_tickProcessMap = new Dictionary<int, TickProcess>();
         private List<int> m_globalIdList = new List<int>();
 
-        public void RegisterGlobalTick(Action<float> action)
+        public void RegisterGlobalTick(Action<TimeSlice> action)
         {
             RegisterGlobalTick(0, action);
         }
 
-        public void UnRegisterGlobalTick(Action<float> action)
+        public void UnRegisterGlobalTick(Action<TimeSlice> action)
         {
             UnRegisterGlobalTick(0, action);
         }
 
-        public void RegisterGlobalTick(int id, Action<float> action)
+        public void RegisterGlobalTick(int id, Action<TimeSlice> action)
         {
-            List<Action<float>> list;
+            List<Action<TimeSlice>> list;
             if (!m_globalTickListMap.TryGetValue(id, out list))
             {
-                list = new List<Action<float>>();
+                list = new List<Action<TimeSlice>>();
                 m_globalTickListMap.Add(id, list);
                 m_globalIdList.Add(id);
                 m_globalIdList.Sort();
@@ -35,9 +35,9 @@ namespace MonMoose.Core
             }
         }
 
-        public void UnRegisterGlobalTick(int id, Action<float> action)
+        public void UnRegisterGlobalTick(int id, Action<TimeSlice> action)
         {
-            List<Action<float>> list;
+            List<Action<TimeSlice>> list;
             if (m_globalTickListMap.TryGetValue(id, out list))
             {
                 list.Remove(action);
@@ -92,19 +92,19 @@ namespace MonMoose.Core
             }
         }
 
-        public void Tick(float deltaTime)
+        public void Tick(TimeSlice timeSlice)
         {
-            TickGlobal(deltaTime, false);
+            TickGlobal(timeSlice, false);
             Dictionary<int, TickProcess>.Enumerator tickIter = m_tickProcessMap.GetEnumerator();
             while (tickIter.MoveNext())
             {
-                tickIter.Current.Value.Tick(deltaTime);
+                tickIter.Current.Value.Tick(timeSlice);
             }
             tickIter.Dispose();
-            TickGlobal(deltaTime, true);
+            TickGlobal(timeSlice, true);
         }
 
-        private void TickGlobal(float deltaTime, bool tickPositive)
+        private void TickGlobal(TimeSlice timeSlice, bool tickPositive)
         {
             for (int i = 0; i < m_globalIdList.Count; ++i)
             {
@@ -113,17 +113,17 @@ namespace MonMoose.Core
                 {
                     continue;
                 }
-                List<Action<float>> list = m_globalTickListMap.GetClassValue(id);
+                List<Action<TimeSlice>> list = m_globalTickListMap.GetClassValue(id);
                 if (list == null)
                 {
                     continue;
                 }
                 for (int j = 0; j < list.Count; ++j)
                 {
-                    Action<float> action = list[j];
+                    Action<TimeSlice> action = list[j];
                     if (action != null)
                     {
-                        action(deltaTime);
+                        action(timeSlice);
                     }
                 }
             }

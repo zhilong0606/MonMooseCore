@@ -30,14 +30,14 @@ namespace MonMoose.Core
             }
         }
 
-        protected override void OnTick(float deltaTime)
+        protected override void OnTick(TimeSlice timeSlice)
         {
             for (int i = 0; i < m_subProcessList.Count; ++i)
             {
                 ProcessBase process = m_subProcessList[i];
                 if (process.state == ProcessStateId.Started)
                 {
-                    process.Tick(deltaTime);
+                    process.Tick(timeSlice);
                 }
             }
         }

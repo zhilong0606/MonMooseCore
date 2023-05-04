@@ -186,7 +186,7 @@ namespace MonMoose.Core
             return 0f;
         }
 
-        public void Tick(float deltaTime)
+        public void Tick(TimeSlice timeSlice)
         {
             foreach (var kv in m_timerMap)
             {
@@ -196,7 +196,7 @@ namespace MonMoose.Core
             for (int i = 0; i < count; ++i)
             {
                 Timer timer = m_timerList[i];
-                timer.Tick(deltaTime);
+                timer.Tick(timeSlice);
                 if (timer.isFinished && !m_finishList.Contains(timer.id))
                 {
                     m_finishList.Add(timer.id);

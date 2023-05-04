@@ -55,13 +55,13 @@ namespace MonMoose.Core
             m_isStart = false;
         }
 
-        public void Tick(float deltaTime)
+        public void Tick(TimeSlice timeSlice)
         {
             if (!m_isStart)
             {
                 return;
             }
-            m_totalTime += deltaTime;
+            m_totalTime += timeSlice.deltaTime;
             ulong tickCountExpect = (ulong)(m_totalTime / m_interval);
             int count = (int)(tickCountExpect - m_tickCount);
             for (int i = 0; i < count; ++i)

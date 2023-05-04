@@ -19,12 +19,12 @@ namespace MonMoose.Core
             m_taskList.Add(task);
         }
 
-        private void OnTick(float deltaTime)
+        private void OnTick(TimeSlice timeSlice)
         {
             for (int i = 0; i < m_taskList.Count; ++i)
             {
                 Task task = m_taskList[i];
-                task.Tick(deltaTime);
+                task.Tick(timeSlice);
             }
             for (int i = m_taskList.Count - 1; i >= 0; --i)
             {

@@ -46,11 +46,11 @@ namespace MonMoose.Core
             }
         }
 
-        public void Tick(float deltaTime)
+        public void Tick(TimeSlice timeSlice)
         {
             if (m_state == EState.Start)
             {
-                OnTick(deltaTime);
+                OnTick(timeSlice);
             }
         }
 
@@ -64,7 +64,7 @@ namespace MonMoose.Core
 
         }
 
-        protected virtual void OnTick(float deltaTime)
+        protected virtual void OnTick(TimeSlice timeSlice)
         {
 
         }

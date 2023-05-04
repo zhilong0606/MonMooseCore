@@ -221,7 +221,7 @@ namespace MonMoose.Core
             }
         }
 
-        public void Tick(float deltaTime)
+        public void Tick(TimeSlice timeSlice)
         {
             if (m_state != ProcessStateId.Started)
             {
@@ -229,9 +229,9 @@ namespace MonMoose.Core
             }
             if (m_timer != null)
             {
-                m_timer.Tick(deltaTime);
+                m_timer.Tick(timeSlice);
             }
-            OnTick(deltaTime);
+            OnTick(timeSlice);
         }
 
         public void SetParent(ProcessBase parent)
@@ -260,6 +260,6 @@ namespace MonMoose.Core
         protected virtual void OnPause() { }
         protected virtual void OnResume() { }
         protected virtual void OnSkip() { }
-        protected virtual void OnTick(float deltaTime) { }
+        protected virtual void OnTick(TimeSlice timeSlice) { }
     }
 }

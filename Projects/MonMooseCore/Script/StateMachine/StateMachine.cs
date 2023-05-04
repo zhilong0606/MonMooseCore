@@ -93,11 +93,11 @@ namespace MonMoose.Core
             m_curState.Enter(context);
         }
 
-        public void Tick(float deltaTime)
+        public void Tick(TimeSlice timeSlice)
         {
             if (m_curState != null)
             {
-                m_curState.Tick(deltaTime);
+                m_curState.Tick(timeSlice);
             }
         }
     }

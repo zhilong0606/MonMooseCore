@@ -48,9 +48,9 @@ namespace MonMoose.Core
             m_process.Resume();
         }
 
-        protected override void OnTick(float deltaTime) 
+        protected override void OnTick(TimeSlice timeSlice) 
         {
-            m_process.Tick(deltaTime);
+            m_process.Tick(timeSlice);
         }
 
         private void OnSubProcessEnd(ProcessBase process)

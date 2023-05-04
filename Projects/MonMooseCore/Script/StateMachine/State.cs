@@ -44,16 +44,16 @@
             m_isRunning = false;
         }
 
-        public void Tick(float deltaTime)
+        public void Tick(TimeSlice timeSlice)
         {
-            OnTick(deltaTime);
+            OnTick(timeSlice);
         }
 
         protected virtual void OnInit() { }
         protected virtual void OnUnInit() { }
         protected virtual void OnEnter(StateContext context) { }
         protected virtual void OnExit() { }
-        protected virtual void OnTick(float deltaTime) { }
+        protected virtual void OnTick(TimeSlice timeSlice) { }
         protected virtual void OnReset() { }
     }
 }

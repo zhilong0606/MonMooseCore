@@ -41,9 +41,9 @@ namespace MonMoose.Core
             return m_idCursor;
         }
 
-        public void Tick(float deltaTime)
+        public void Tick(TimeSlice timeSlice)
         {
-            m_timerMap.Tick(deltaTime);
+            m_timerMap.Tick(timeSlice);
         }
 
         public Timer GetTimer(int id)

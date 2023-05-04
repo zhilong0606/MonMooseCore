@@ -27,11 +27,11 @@ namespace MonMoose.Core
             get { return m_targetTime - m_curTime; }
         }
 
-        public void Tick(float deltaTime)
+        public void Tick(TimeSlice timeSlice)
         {
             if (isActive)
             {
-                m_curTime += deltaTime;
+                m_curTime += timeSlice.deltaTime;
                 if (m_curTime >= m_targetTime)
                 {
                     m_curTime = m_targetTime;

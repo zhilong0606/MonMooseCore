@@ -145,7 +145,7 @@ namespace MonMoose.Core
             }
         }
 
-        public void Tick(float deltaTime)
+        public void Tick(TimeSlice timeSlice)
         {
             if (m_initialType == EInitialType.Async)
             {
@@ -165,7 +165,7 @@ namespace MonMoose.Core
                 }
                 else if (m_curSubIndex <= m_subList.Count)
                 {
-                    m_subList[m_curSubIndex - 1].Tick(deltaTime);
+                    m_subList[m_curSubIndex - 1].Tick(timeSlice);
                     if (m_subList[m_curSubIndex - 1].IsFinished)
                     {
                         m_curSubIndex++;
