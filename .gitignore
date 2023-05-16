@@ -10,7 +10,6 @@ Projects/UnityCore/*.user
 Projects/UnityCore/.vs/
 Projects/UnityCore/bin/
 Projects/UnityCore/obj/
-Projects/UnityCore/**/*.meta
 
 Projects/DataStructure/*.user
 Projects/DataStructure/.vs/
