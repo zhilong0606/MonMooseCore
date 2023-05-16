@@ -6,6 +6,12 @@ Projects/MonMooseCore/bin/
 Projects/MonMooseCore/obj/
 Projects/MonMooseCore/**/*.meta
 
+Projects/UnityCore/*.user
+Projects/UnityCore/.vs/
+Projects/UnityCore/bin/
+Projects/UnityCore/obj/
+Projects/UnityCore/**/*.meta
+
 Projects/DataStructure/*.user
 Projects/DataStructure/.vs/
 Projects/DataStructure/bin/
