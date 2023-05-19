@@ -11,5 +11,7 @@ namespace MonMoose.Core
         Lobby,
         Loading,
         WorldMain,
+        BattleMain,
+        BattleTop,
     }
 }

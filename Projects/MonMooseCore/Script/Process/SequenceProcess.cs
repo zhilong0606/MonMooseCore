@@ -21,7 +21,7 @@ namespace MonMoose.Core
 
         public void ProcessNext()
         {
-            while (m_curIndex < m_subProcessList.Count)
+            while (m_curIndex < m_subProcessList.Count - 1)
             {
                 m_curIndex++;
                 ProcessBase process = m_subProcessList.GetValueSafely(m_curIndex);

@@ -17,8 +17,20 @@ namespace MonMoose.Core
 
         public void AddUnscaledDeltaTime(float addTime)
         {
-            float newUnScaledDeltaTime = unscaledDeltaTime + addTime;
-            deltaTime = deltaTime * newUnScaledDeltaTime / unscaledDeltaTime;
+            float newUnscaledDeltaTime = unscaledDeltaTime + addTime;
+            deltaTime = deltaTime * newUnscaledDeltaTime / unscaledDeltaTime;
+        }
+
+        public void ResizeByDeltaTime(float time)
+        {
+            float newDeltaTime = time;
+            unscaledDeltaTime = unscaledDeltaTime * newDeltaTime / deltaTime;
+        }
+
+        public void ResizeByUnscaledDeltaTime(float time)
+        {
+            float newUnscaledDeltaTime = time;
+            deltaTime = deltaTime * newUnscaledDeltaTime / unscaledDeltaTime;
         }
     }
 }
