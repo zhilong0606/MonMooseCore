@@ -25,9 +25,24 @@ namespace MonMoose.Core
             m_rootNode = rootNode;
         }
 
-        public void Reset()
+        public void Clear()
         {
+            if (m_rootNode != null)
+            {
+                m_rootNode.Release();
+                m_rootNode = null;
+            }
             m_curNode = null;
+        }
+
+        public void AddChildToCurNode(TreeNode node)
+        {
+            if (m_curNode == null)
+            {
+                DebugUtility.LogError("AddChildToCurNode:m_curNode is null");
+                return;
+            }
+            m_curNode.AddChild(node);
         }
 
         public bool MoveToNext()

@@ -42,7 +42,7 @@ namespace MonMoose.Core
                 DebugUtility.LogError("TreeNode already is child");
                 return;
             }
-            node.m_parent = node;
+            node.m_parent = this;
             m_childList.Add(node);
             OnAddChild(node);
         }
