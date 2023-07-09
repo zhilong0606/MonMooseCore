@@ -40,12 +40,30 @@ namespace MonMoose.Core
 
         public void ReleaseAll(IList objList)
         {
+            if (objList == null)
+            {
+                return;
+            }
             int count = objList.Count;
             for (int i = 0; i < count; ++i)
             {
                 Release(objList[i]);
             }
             objList.Clear();
+        }
+
+        public void ReleaseAll<T>(T[] objs) where T : IClassPoolObj
+        {
+            if (objs == null)
+            {
+                return;
+            }
+            int count = objs.Length;
+            for (int i = 0; i < count; ++i)
+            {
+                Release(objs[i]);
+                objs[i] = default(T);
+            }
         }
 
         public void SetCapacity(Type type, int capacity, Func<Type, object> actionOnCreate = null)

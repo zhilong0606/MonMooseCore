@@ -102,7 +102,9 @@ namespace MonMoose.Core
             if (poolObj != null)
             {
                 poolObj.OnFetch();
-                RecordCreateStackTraceAndLog(poolObj);
+                poolObj.releaseStackTrace = null;
+                poolObj.releaseStackTraceLog = null;
+                RecordFetchStackTraceAndLog(poolObj);
             }
             OnFetch(obj);
             NotifyOnFetch(obj);
@@ -127,6 +129,15 @@ namespace MonMoose.Core
                     throw new Exception(string.Format("Error: Trying to destroy object that is not create from this pool. {0} => {1}", obj.GetType().Name, classType.Name));
                 }
                 PoolObjHolder holder = m_holderList[holderIndex];
+                if (!holder.isUsing)
+                {
+                    IClassPoolObj po = obj as IClassPoolObj;
+                    if(po != null)
+                    {
+                        DebugUtility.LogError(string.Format("[ClassPool] Cannot release already released.\n{0}", po.releaseStackTraceLog));
+                        return;
+                    }
+                }
                 holder.isUsing = false;
                 m_holderList[holderIndex] = holder;
 
@@ -135,8 +146,9 @@ namespace MonMoose.Core
             if (poolObj != null)
             {
                 poolObj.OnRelease();
-                poolObj.stackTrace = null;
-                poolObj.createLog = null;
+                poolObj.fetchStackTrace = null;
+                poolObj.fetchStackTraceLog = null;
+                RecordReleaseStackTraceAndLog(poolObj);
             }
             OnRelease(obj);
             NotifyOnRelease(obj);
@@ -259,7 +271,7 @@ namespace MonMoose.Core
             }
         }
 
-        private void RecordCreateStackTraceAndLog(IClassPoolObj poolObj)
+        private void RecordFetchStackTraceAndLog(IClassPoolObj poolObj)
         {
 #if !RELEASE && DEBUG_CLASSPOOL
             System.Diagnostics.StackTrace stackTrace = new System.Diagnostics.StackTrace(true);
@@ -273,8 +285,27 @@ namespace MonMoose.Core
                 }
                 sb.Append(match.Groups[match.Groups.Count - 1].Value);
             }
-            poolObj.stackTrace = stackTrace;
-            poolObj.createLog = sb.ToString();
+            poolObj.fetchStackTrace = stackTrace;
+            poolObj.fetchStackTraceLog = sb.ToString();
+#endif
+        }
+
+        private void RecordReleaseStackTraceAndLog(IClassPoolObj poolObj)
+        {
+#if !RELEASE && DEBUG_CLASSPOOL
+            System.Diagnostics.StackTrace stackTrace = new System.Diagnostics.StackTrace(true);
+            MatchCollection matchCollection = m_logRegex.Matches(stackTrace.ToString());
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            foreach (Match match in matchCollection)
+            {
+                if (sb.Length != 0)
+                {
+                    sb.Append("-->");
+                }
+                sb.Append(match.Groups[match.Groups.Count - 1].Value);
+            }
+            poolObj.releaseStackTrace = stackTrace;
+            poolObj.releaseStackTraceLog = sb.ToString();
 #endif
         }
 

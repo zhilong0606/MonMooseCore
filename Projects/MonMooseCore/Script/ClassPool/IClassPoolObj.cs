@@ -8,7 +8,9 @@
         void OnFetch();
         void OnRelease();
 
-        System.Diagnostics.StackTrace stackTrace { get; set; }
-        string createLog { get; set; }
+        System.Diagnostics.StackTrace fetchStackTrace { get; set; }
+        System.Diagnostics.StackTrace releaseStackTrace { get; set; }
+        string fetchStackTraceLog { get; set; }
+        string releaseStackTraceLog { get; set; }
     }
 }
