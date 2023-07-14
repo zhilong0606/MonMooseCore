@@ -75,13 +75,18 @@ namespace MonMoose.Core
             }
         }
 
-        public override void OnRelease()
+        public void Reset()
         {
             m_targetTime = default;
             m_curTime = 0f;
             isFinished = true;
             isActive = false;
             m_actionTimeUp = null;
+        }
+
+        public override void OnRelease()
+        {
+            Reset();
         }
     }
 }
