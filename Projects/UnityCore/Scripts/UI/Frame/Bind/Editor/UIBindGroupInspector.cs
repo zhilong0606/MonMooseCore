@@ -18,15 +18,9 @@ namespace MonMoose.Core
                 return;
             }
             EditorGUI.BeginChangeCheck();
-            MonoScript monoScript = UIBindEditorUtility.GetMonoScriptBindGroup(group);
-            MonoScript newMonoScript = EditorGUILayout.ObjectField("Controller重云", monoScript, typeof(MonoScript), false) as MonoScript;
+
             bool isDirty = false;
-            if (newMonoScript != monoScript)
-            {
-                monoScript = newMonoScript;
-                group.scriptWeakRef = AssetWeakRefEditorUtility.GetAssetWeakRef(monoScript);
-                isDirty = true;
-            }
+            AssetWeakRefEditorUtility.PropertyField<MonoScript>("Controller重云", group.scriptWeakRef, ref isDirty, a => group.scriptWeakRef = a);
             EditorGUILayout.PropertyField(serializedObject.FindProperty("bindItemList"));
             if (GUILayout.Button("Generate Bind Code"))
             {

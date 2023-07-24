@@ -21,16 +21,9 @@ namespace MonMoose.Core
             EditorGUILayout.PropertyField(serializedObject.FindProperty("mediumId"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("tagIdList"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("stackOptimizable"));
-            bool needUpdateMonoScript;
-            MonoScript monoScript = AssetWeakRefEditorUtility.GetAssetByWeakRef<MonoScript>(config.scriptWeakRef, out needUpdateMonoScript);
-            MonoScript newMonoScript = EditorGUILayout.ObjectField("Medium重云", monoScript, typeof(MonoScript), false) as MonoScript;
+
             bool isDirty = false;
-            if (newMonoScript != monoScript || needUpdateMonoScript)
-            {
-                monoScript = newMonoScript;
-                config.scriptWeakRef = AssetWeakRefEditorUtility.GetAssetWeakRef(monoScript);
-                isDirty = true;
-            }
+            MonoScript monoScript = AssetWeakRefEditorUtility.PropertyField<MonoScript>("Medium重云", config.scriptWeakRef, ref isDirty, a => config.scriptWeakRef = a);
             string typeName = monoScript != null ? monoScript.name : string.Empty;
             if (config.typeName != typeName)
             {
