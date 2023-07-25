@@ -42,7 +42,7 @@ namespace MonMoose.Core
         {
             T assetObj = GetAssetByPath<T>(refPath.path);
             needUpdate = false;
-            if (assetObj == null)
+            if (assetObj == null && !string.IsNullOrEmpty(refPath.guid))
             {
                 assetObj = GetAssetByGuid<T>(refPath.guid);
                 needUpdate = true;

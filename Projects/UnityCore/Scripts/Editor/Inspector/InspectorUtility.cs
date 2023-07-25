@@ -5,19 +5,46 @@ using System.Reflection;
 using Sirenix.Utilities.Editor;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Playables;
 
 namespace MonMoose.Core
 {
 	public static class InspectorUtility
 	{
+        public static bool FloatTextField(float value, out float newValue, params GUILayoutOption[] options)
+        {
+            newValue = EditorGUILayout.FloatField(value, options);
+            if (Mathf.Abs(newValue - value) >= 1e-4)
+            {
+                return true;
+            }
+            newValue = value;
+            return false;
+        }
+
         public static void DrawInspector(object obj, ref bool isDirty)
         {
+            List<FieldInfo> fieldInfoList = new List<FieldInfo>();
+            List<FieldInfo> forIndexList = new List<FieldInfo>();
             foreach (var fi in obj.GetType().GetFields())
             {
                 if (!fi.IsPublic || fi.IsStatic)
                 {
                     continue;
                 }
+                fieldInfoList.Add(fi);
+                forIndexList.Add(fi);
+            }
+            fieldInfoList.Sort((x, y) =>
+            {
+                if (x.DeclaringType != null && y.DeclaringType != null && x.DeclaringType != y.DeclaringType)
+                {
+                    return x.DeclaringType.IsAssignableFrom(y.DeclaringType) ? -1 : 1;
+                }
+                return forIndexList.IndexOf(x).CompareTo(forIndexList.IndexOf(y));
+            });
+            foreach (var fi in fieldInfoList)
+            {
                 DrawInspector(fi, obj, ref isDirty);
             }
         }
@@ -27,6 +54,18 @@ namespace MonMoose.Core
             if (fieldInfo.FieldType == typeof(bool))
             {
                 return DrawInspectorBool(fieldInfo, obj, ref isDirty);
+            }
+            if (fieldInfo.FieldType == typeof(int))
+            {
+                return DrawInspectorInt(fieldInfo, obj, ref isDirty);
+            }
+            if (fieldInfo.FieldType == typeof(float))
+            {
+                return DrawInspectorFloat(fieldInfo, obj, ref isDirty);
+            }
+            if (fieldInfo.FieldType == typeof(string))
+            {
+                return DrawInspectorString(fieldInfo, obj, ref isDirty);
             }
             if (typeof(EnumString).IsAssignableFrom(fieldInfo.FieldType))
             {
@@ -45,18 +84,22 @@ namespace MonMoose.Core
 
         private static bool DrawInspectorBool(FieldInfo fieldInfo, object obj, ref bool isDirty)
         {
-            if (fieldInfo == null)
-            {
-                return false;
-            }
-            var value = (bool)fieldInfo.GetValue(obj);
-            var newValue = EditorGUILayout.Toggle(fieldInfo.Name, value, GUILayout.ExpandWidth(true));
-            if (newValue != value)
-            {
-                fieldInfo.SetValue(obj, newValue);
-                isDirty = true;
-            }
-            return true;
+            return DrawInspectorTemplate<bool>(fieldInfo, obj, EditorGUILayout.Toggle, (x, y) => x == y, ref isDirty);
+        }
+
+        private static bool DrawInspectorInt(FieldInfo fieldInfo, object obj, ref bool isDirty)
+        {
+            return DrawInspectorTemplate<int>(fieldInfo, obj, EditorGUILayout.IntField, (x, y) => x == y, ref isDirty);
+        }
+
+        private static bool DrawInspectorFloat(FieldInfo fieldInfo, object obj, ref bool isDirty)
+        {
+            return DrawInspectorTemplate<float>(fieldInfo, obj, EditorGUILayout.FloatField, (x, y) => Math.Abs(x - y) < 1e-4, ref isDirty);
+        }
+
+        private static bool DrawInspectorString(FieldInfo fieldInfo, object obj, ref bool isDirty)
+        {
+            return DrawInspectorTemplate<string>(fieldInfo, obj, EditorGUILayout.TextField, (x, y) => x == y, ref isDirty);
         }
 
         private static bool DrawInspectorEnum(FieldInfo fieldInfo, object obj, ref bool isDirty)
@@ -219,6 +262,22 @@ namespace MonMoose.Core
                 valueList.Add((int)enumValue);
                 nameList.Add(enumValue.ToString());
             }
+        }
+
+        private static bool DrawInspectorTemplate<T>(FieldInfo fieldInfo, object obj, Func<string, T, GUILayoutOption[], T> funcOnDrawField, Func<T, T, bool> funcOnCheckSame, ref bool isDirty)
+        {
+            if (fieldInfo == null)
+            {
+                return false;
+            }
+            var value = (T)fieldInfo.GetValue(obj);
+            var newValue = funcOnDrawField(fieldInfo.Name, value, new[] { GUILayout.ExpandWidth(true) });
+            if (!funcOnCheckSame(newValue, value))
+            {
+                fieldInfo.SetValue(obj, newValue);
+                isDirty = true;
+            }
+            return true;
         }
     }
 }
