@@ -65,11 +65,11 @@ namespace MonMoose.Core
             return assetObj;
         }
 
-        public static T PropertyField<T>(string name, AssetWeakRef weakRef, ref bool isDirty, Action<AssetWeakRef> setter) where T : UnityEngine.Object
+        public static T PropertyField<T>(string name, AssetWeakRef weakRef, ref bool isDirty, Action<AssetWeakRef> setter, params GUILayoutOption[] options) where T : UnityEngine.Object
         {
             bool needUpdate;
             T asset = GetAssetByWeakRef<T>(weakRef, out needUpdate);
-            T newAsset = EditorGUILayout.ObjectField(name, asset, typeof(T), false) as T;
+            T newAsset = EditorGUILayout.ObjectField(name, asset, typeof(T), false, options) as T;
             if (newAsset != asset || needUpdate)
             {
                 asset = newAsset;

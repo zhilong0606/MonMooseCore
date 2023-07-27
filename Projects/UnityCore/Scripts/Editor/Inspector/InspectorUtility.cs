@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using MonMoose.GameLogic;
 using Sirenix.Utilities.Editor;
 using UnityEditor;
 using UnityEngine;
@@ -10,7 +11,18 @@ using UnityEngine.Playables;
 namespace MonMoose.Core
 {
 	public static class InspectorUtility
-	{
+    {
+        public static bool IntTextField(int value, out int newValue, params GUILayoutOption[] options)
+        {
+            newValue = EditorGUILayout.IntField(value, options);
+            if (newValue != value)
+            {
+                return true;
+            }
+            newValue = value;
+            return false;
+        }
+
         public static bool FloatTextField(float value, out float newValue, params GUILayoutOption[] options)
         {
             newValue = EditorGUILayout.FloatField(value, options);
@@ -67,6 +79,10 @@ namespace MonMoose.Core
             {
                 return DrawInspectorString(fieldInfo, obj, ref isDirty);
             }
+            if (fieldInfo.FieldType == typeof(AssetWeakRef))
+            {
+                return DrawInspectorAssetWeakRef(fieldInfo, obj, ref isDirty);
+            }
             if (typeof(EnumString).IsAssignableFrom(fieldInfo.FieldType))
             {
                 return DrawInspectorEnumString(fieldInfo, obj, ref isDirty);
@@ -100,6 +116,12 @@ namespace MonMoose.Core
         private static bool DrawInspectorString(FieldInfo fieldInfo, object obj, ref bool isDirty)
         {
             return DrawInspectorTemplate<string>(fieldInfo, obj, EditorGUILayout.TextField, (x, y) => x == y, ref isDirty);
+        }
+
+        private static bool DrawInspectorAssetWeakRef(FieldInfo fieldInfo, object obj, ref bool isDirty)
+        {
+            AssetWeakRefEditorUtility.PropertyField<UnityEngine.Object>(fieldInfo.Name, (AssetWeakRef)fieldInfo.GetValue(obj), ref isDirty, awr => fieldInfo.SetValue(obj, awr));
+            return true;
         }
 
         private static bool DrawInspectorEnum(FieldInfo fieldInfo, object obj, ref bool isDirty)

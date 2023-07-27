@@ -12,10 +12,9 @@ namespace MonMoose.Core
         public AnimatorStateType stateType;
         public float fadeTime;
         public string name;
-        public Action actionOnEnd;
+        public Action<bool> actionOnEnd;
 
-        //actionOnEnd:不是一定会调到
-        public static AnimatorPlayCommand Create(AnimatorStateType stateType, string name, float fadeTime, Action actionOnEnd = null)
+        public static AnimatorPlayCommand Create(AnimatorStateType stateType, string name, float fadeTime, Action<bool> actionOnEnd)
         {
             AnimatorPlayCommand obj = new AnimatorPlayCommand();
             obj.stateType = stateType;
@@ -23,6 +22,23 @@ namespace MonMoose.Core
             obj.fadeTime = fadeTime;
             obj.actionOnEnd = actionOnEnd;
             return obj;
+        }
+
+        public static AnimatorPlayCommand Create(AnimatorStateType stateType, string name, float fadeTime)
+        {
+            AnimatorPlayCommand obj = new AnimatorPlayCommand();
+            obj.stateType = stateType;
+            obj.name = name;
+            obj.fadeTime = fadeTime;
+            obj.actionOnEnd = null;
+            return obj;
+        }
+
+        public void InvokeEndIfAlwaysCall(bool interrupt)
+        {
+            Action<bool> temp = actionOnEnd;
+            actionOnEnd = null;
+            temp.InvokeSafely(interrupt);
         }
     }
 }

@@ -15,6 +15,7 @@ namespace MonMoose.Core
         private Dictionary<string, AnimationClip> m_clipMap = new Dictionary<string, AnimationClip>();
         private List<string> m_overrideKeyList = new List<string>();
         private List<AnimatorPlayCommand> m_commandList = new List<AnimatorPlayCommand>();
+        private bool isHandling;
 
         public Vector3 rootMotionDeltaPos
         {
@@ -87,12 +88,25 @@ namespace MonMoose.Core
 
         public void Play(params AnimatorPlayCommand[] commands)
         {
-            m_commandList.Clear();
+            if (isHandling)
+            {
+                Debug.LogError("isHandling");
+                return;
+            }
+            isHandling = true;
             for (int i = 0; i < m_layerList.Count; ++i)
             {
+                AnimatorPlayCommand command = m_layerList[i].command;
                 m_layerList[i].ResetPlayState();
+                command.InvokeEndIfAlwaysCall(true);
             }
+            for (int i = 0; i < m_commandList.Count; ++i)
+            {
+                m_commandList[i].InvokeEndIfAlwaysCall(true);
+            }
+            m_commandList.Clear();
             AppendPlayCommandInternal(commands);
+            isHandling = false;
         }
 
         public void AppendPlayCommand(params AnimatorPlayCommand[] commands)
@@ -297,6 +311,11 @@ namespace MonMoose.Core
                 get { return m_isPlaying; }
             }
 
+            public AnimatorPlayCommand command
+            {
+                get { return m_command; }
+            }
+
             public StateGroup curStateGroup
             {
                 get { return m_curStateGroup; }
@@ -360,11 +379,11 @@ namespace MonMoose.Core
             private void OnOnceTimerEnd()
             {
                 m_isPlaying = false;
-                Action temp = m_command.actionOnEnd;
+                Action<bool> temp = m_command.actionOnEnd;
                 m_command = default;
                 if (temp != null)
                 {
-                    temp();
+                    temp(false);
                 }
                 if (actionOnPlayEnd != null)
                 {
