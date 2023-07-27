@@ -10,6 +10,7 @@ namespace MonMoose.GameLogic
     public class ParticleData
     {
         public int id;
+        public string desc;
         public AssetWeakRef effect;
     }
 }

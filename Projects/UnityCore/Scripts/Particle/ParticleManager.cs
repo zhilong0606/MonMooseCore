@@ -96,6 +96,7 @@ namespace MonMoose.GameLogic
                 if (info.isOver)
                 {
                     m_runtimeInfoList.RemoveAt(i);
+                    GameObjectPoolManager.instance.Release(info.go);
                     info.actionOnEnd.InvokeSafely();
                     info.Release();
                     continue;

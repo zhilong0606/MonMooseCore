@@ -12,26 +12,29 @@ namespace MonMoose.Core
 {
 	public static class InspectorUtility
     {
-        public static bool IntTextField(int value, out int newValue, params GUILayoutOption[] options)
+        public static void IntTextField(ref int value, ref bool isDirty, params GUILayoutOption[] options)
         {
-            newValue = EditorGUILayout.IntField(value, options);
-            if (newValue != value)
-            {
-                return true;
-            }
-            newValue = value;
-            return false;
+            TextFieldTemplate(ref value, ref isDirty, EditorGUILayout.IntField, (a, b) => a == b, options);
         }
 
-        public static bool FloatTextField(float value, out float newValue, params GUILayoutOption[] options)
+        public static void FloatTextField(ref float value, ref bool isDirty, params GUILayoutOption[] options)
         {
-            newValue = EditorGUILayout.FloatField(value, options);
-            if (Mathf.Abs(newValue - value) >= 1e-4)
+            TextFieldTemplate(ref value, ref isDirty, EditorGUILayout.FloatField, (a, b) => Mathf.Abs(a - b) < 1e-4, options);
+        }
+
+        public static void StringTextField(ref string value, ref bool isDirty, params GUILayoutOption[] options)
+        {
+            TextFieldTemplate(ref value, ref isDirty, EditorGUILayout.TextField, (a, b) => a == b, options);
+        }
+
+        private static void TextFieldTemplate<T>(ref T value, ref bool isDirty, Func<T, GUILayoutOption[], T> funcOnDrawField, Func<T, T, bool> funcOnCheckSame, params GUILayoutOption[] options)
+        {
+            T newValue = funcOnDrawField(value, options);
+            if (!funcOnCheckSame(newValue, value))
             {
-                return true;
+                isDirty = true;
+                value = newValue;
             }
-            newValue = value;
-            return false;
         }
 
         public static void DrawInspector(object obj, ref bool isDirty)
@@ -61,61 +64,60 @@ namespace MonMoose.Core
             }
         }
 
-        public static bool DrawInspector(FieldInfo fieldInfo, object obj, ref bool isDirty)
+        public static void DrawInspector(FieldInfo fieldInfo, object obj, ref bool isDirty)
         {
             if (fieldInfo.FieldType == typeof(bool))
             {
-                return DrawInspectorBool(fieldInfo, obj, ref isDirty);
+                DrawInspectorBool(fieldInfo, obj, ref isDirty);
             }
             if (fieldInfo.FieldType == typeof(int))
             {
-                return DrawInspectorInt(fieldInfo, obj, ref isDirty);
+                DrawInspectorInt(fieldInfo, obj, ref isDirty);
             }
             if (fieldInfo.FieldType == typeof(float))
             {
-                return DrawInspectorFloat(fieldInfo, obj, ref isDirty);
+                DrawInspectorFloat(fieldInfo, obj, ref isDirty);
             }
             if (fieldInfo.FieldType == typeof(string))
             {
-                return DrawInspectorString(fieldInfo, obj, ref isDirty);
+                DrawInspectorString(fieldInfo, obj, ref isDirty);
             }
             if (fieldInfo.FieldType == typeof(AssetWeakRef))
             {
-                return DrawInspectorAssetWeakRef(fieldInfo, obj, ref isDirty);
+                DrawInspectorAssetWeakRef(fieldInfo, obj, ref isDirty);
             }
             if (typeof(EnumString).IsAssignableFrom(fieldInfo.FieldType))
             {
-                return DrawInspectorEnumString(fieldInfo, obj, ref isDirty);
+                DrawInspectorEnumString(fieldInfo, obj, ref isDirty);
             }
             if (typeof(CustomizableValue).IsAssignableFrom(fieldInfo.FieldType))
             {
-                return DrawInspectorCustomizableValue(fieldInfo, obj, ref isDirty);
+                DrawInspectorCustomizableValue(fieldInfo, obj, ref isDirty);
             }
             if (typeof(IList).IsAssignableFrom(fieldInfo.FieldType))
             {
-                return DrawInspectorList(fieldInfo, obj, ref isDirty);
+                DrawInspectorList(fieldInfo, obj, ref isDirty);
             }
-            return false;
         }
 
-        private static bool DrawInspectorBool(FieldInfo fieldInfo, object obj, ref bool isDirty)
+        private static void DrawInspectorBool(FieldInfo fieldInfo, object obj, ref bool isDirty)
         {
-            return DrawInspectorTemplate<bool>(fieldInfo, obj, EditorGUILayout.Toggle, (x, y) => x == y, ref isDirty);
+            DrawInspectorTemplate<bool>(fieldInfo, obj, EditorGUILayout.Toggle, (x, y) => x == y, ref isDirty);
         }
 
-        private static bool DrawInspectorInt(FieldInfo fieldInfo, object obj, ref bool isDirty)
+        private static void DrawInspectorInt(FieldInfo fieldInfo, object obj, ref bool isDirty)
         {
-            return DrawInspectorTemplate<int>(fieldInfo, obj, EditorGUILayout.IntField, (x, y) => x == y, ref isDirty);
+            DrawInspectorTemplate<int>(fieldInfo, obj, EditorGUILayout.IntField, (x, y) => x == y, ref isDirty);
         }
 
-        private static bool DrawInspectorFloat(FieldInfo fieldInfo, object obj, ref bool isDirty)
+        private static void DrawInspectorFloat(FieldInfo fieldInfo, object obj, ref bool isDirty)
         {
-            return DrawInspectorTemplate<float>(fieldInfo, obj, EditorGUILayout.FloatField, (x, y) => Math.Abs(x - y) < 1e-4, ref isDirty);
+            DrawInspectorTemplate<float>(fieldInfo, obj, EditorGUILayout.FloatField, (x, y) => Math.Abs(x - y) < 1e-4, ref isDirty);
         }
 
-        private static bool DrawInspectorString(FieldInfo fieldInfo, object obj, ref bool isDirty)
+        private static void DrawInspectorString(FieldInfo fieldInfo, object obj, ref bool isDirty)
         {
-            return DrawInspectorTemplate<string>(fieldInfo, obj, EditorGUILayout.TextField, (x, y) => x == y, ref isDirty);
+            DrawInspectorTemplate<string>(fieldInfo, obj, EditorGUILayout.TextField, (x, y) => x == y, ref isDirty);
         }
 
         private static bool DrawInspectorAssetWeakRef(FieldInfo fieldInfo, object obj, ref bool isDirty)
@@ -124,11 +126,11 @@ namespace MonMoose.Core
             return true;
         }
 
-        private static bool DrawInspectorEnum(FieldInfo fieldInfo, object obj, ref bool isDirty)
+        private static void DrawInspectorEnum(FieldInfo fieldInfo, object obj, ref bool isDirty)
         {
             if (fieldInfo == null)
             {
-                return false;
+                return;
             }
             Type enumType = fieldInfo.FieldType;
             object enumValue = fieldInfo.GetValue(obj);
@@ -137,7 +139,7 @@ namespace MonMoose.Core
             GetEnumDefine(enumType, out enumValueList, out enumNameList);
             if(enumNameList.Count == 0)
             {
-                return false;
+                return;
             }
             int enumValueIndex = enumValueList.IndexOf((int)enumValue);
             int enumValueIndexNew = EditorGUILayout.Popup(fieldInfo.Name, Mathf.Clamp(enumValueIndex, 0, enumValueList.Count - 1), enumNameList.ToArray());
@@ -146,38 +148,37 @@ namespace MonMoose.Core
                 fieldInfo.SetValue(obj, enumValueList[enumValueIndexNew]);
                 isDirty = true;
             }
-            return true;
         }
 
-        private static bool DrawInspectorEnumString(FieldInfo fieldInfo, object obj, ref bool isDirty)
+        private static void DrawInspectorEnumString(FieldInfo fieldInfo, object obj, ref bool isDirty)
         {
             if (fieldInfo == null)
             {
-                return false;
+                return;
             }
             EnumString enumString = fieldInfo.GetValue(obj) as EnumString;
             if (enumString == null)
             {
-                return false;
+                return;
             }
             FieldInfo enumStringValueFieldInfo = enumString.GetType().GetField("value");
             if (enumStringValueFieldInfo == null)
             {
-                return false;
+                return;
             }
             object enumStringValue = enumStringValueFieldInfo.GetValue(enumString);
             Type enumType = enumStringValue.GetType();
             var enumArray = Enum.GetValues(enumType);
             if (enumArray.Length == 0)
             {
-                return false;
+                return;
             }
             List<string> enumNameList;
             List<int> enumValueList;
             GetEnumDefine(enumType, out enumValueList, out enumNameList);
             if (enumNameList.Count == 0)
             {
-                return false;
+                return;
             }
             FieldInfo enumStringNameFieldInfo = enumString.GetType().GetField("m_enumName", BindingFlags.NonPublic | BindingFlags.Instance);
             if (enumStringNameFieldInfo != null)
@@ -190,21 +191,19 @@ namespace MonMoose.Core
                     enumStringNameFieldInfo.SetValue(enumString, enumValueList[enumStringValueIndexNew].ToString());
                     isDirty = true;
                 }
-                return true;
             }
-            return false;
         }
 
-        private static bool DrawInspectorList(FieldInfo fieldInfo, object obj, ref bool isDirty)
+        private static void DrawInspectorList(FieldInfo fieldInfo, object obj, ref bool isDirty)
         {
             if (fieldInfo == null)
             {
-                return false;
+                return;
             }
             IList list = fieldInfo.GetValue(obj) as IList;
             if (list == null)
             {
-                return false;
+                return;
             }
             SirenixEditorGUI.BeginHorizontalToolbar();
             //this.visible.Value = SirenixEditorGUI.Foldout(this.visible.Value, GUIHelper.TempContent("SyncList " + label.text + "  [" + typeof(TList).Name + "]"));
@@ -236,24 +235,23 @@ namespace MonMoose.Core
                 SirenixEditorGUI.EndVerticalList();
             }
             SirenixEditorGUI.EndFadeGroup();
-            return true;
         }
 
-        private static bool DrawInspectorCustomizableValue(FieldInfo fieldInfo, object obj, ref bool isDirty)
+        private static void DrawInspectorCustomizableValue(FieldInfo fieldInfo, object obj, ref bool isDirty)
         {
             if (fieldInfo == null)
             {
-                return false;
+                return;
             }
             CustomizableValue customizableValue = fieldInfo.GetValue(obj) as CustomizableValue;
             if (customizableValue == null)
             {
-                return false;
+                return;
             }
             FieldInfo specificValueFieldInfo = customizableValue.GetType().GetField("specificValue");
             if (specificValueFieldInfo == null)
             {
-                return false;
+                return;
             }
             EditorGUILayout.BeginHorizontal();
             EditorGUI.BeginDisabledGroup(customizableValue.needCustom);
@@ -267,7 +265,6 @@ namespace MonMoose.Core
                 isDirty = true;
             }
             EditorGUILayout.EndHorizontal();
-            return true;
         }
 
         private static void GetEnumDefine(Type type, out List<int> valueList, out List<string> nameList)
@@ -286,11 +283,11 @@ namespace MonMoose.Core
             }
         }
 
-        private static bool DrawInspectorTemplate<T>(FieldInfo fieldInfo, object obj, Func<string, T, GUILayoutOption[], T> funcOnDrawField, Func<T, T, bool> funcOnCheckSame, ref bool isDirty)
+        private static void DrawInspectorTemplate<T>(FieldInfo fieldInfo, object obj, Func<string, T, GUILayoutOption[], T> funcOnDrawField, Func<T, T, bool> funcOnCheckSame, ref bool isDirty)
         {
             if (fieldInfo == null)
             {
-                return false;
+                return;
             }
             var value = (T)fieldInfo.GetValue(obj);
             var newValue = funcOnDrawField(fieldInfo.Name, value, new[] { GUILayout.ExpandWidth(true) });
@@ -299,7 +296,6 @@ namespace MonMoose.Core
                 fieldInfo.SetValue(obj, newValue);
                 isDirty = true;
             }
-            return true;
         }
     }
 }
