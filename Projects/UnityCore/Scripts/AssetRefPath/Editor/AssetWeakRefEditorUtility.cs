@@ -1,11 +1,32 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 
 namespace MonMoose.Core
 {
+    [CustomPropertyDrawer(typeof(AssetWeakRef), true)]
+    public class AssetWeakRefInspector : PropertyDrawer
+    {
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            EditorGUI.BeginProperty(position, label, property);
+
+            bool needUpdate;
+            position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
+            UnityEngine.Object asset = AssetWeakRefEditorUtility.GetAssetByWeakRef<UnityEngine.Object>(property, out needUpdate);
+            UnityEngine.Object newAsset = EditorGUI.ObjectField(position, asset, typeof(UnityEngine.Object), false);
+            if (newAsset != asset || needUpdate)
+            {
+                AssetWeakRefEditorUtility.SetAssetWeakRef(property, newAsset);
+                GUI.changed = true;
+            }
+            EditorGUI.EndProperty();
+        }
+    }
+
     public static class AssetWeakRefEditorUtility
     {
         public static AssetWeakRef GetAssetWeakRef(UnityEngine.Object assetObj)
@@ -28,8 +49,8 @@ namespace MonMoose.Core
                 path = AssetDatabase.GetAssetPath(assetObj);
                 guid = AssetDatabase.GUIDFromAssetPath(path).ToString();
             }
-            property.FindPropertyRelative("path").stringValue = path;
-            property.FindPropertyRelative("guid").stringValue = guid;
+            GetPath(property).stringValue = path;
+            GetGuid(property).stringValue = guid;
         }
 
         public static T GetAssetByWeakRef<T>(AssetWeakRef refPath) where T : UnityEngine.Object
@@ -40,29 +61,32 @@ namespace MonMoose.Core
 
         public static T GetAssetByWeakRef<T>(AssetWeakRef refPath, out bool needUpdate) where T : UnityEngine.Object
         {
-            T assetObj = GetAssetByPath<T>(refPath.path);
-            needUpdate = false;
-            if (assetObj == null && !string.IsNullOrEmpty(refPath.guid))
-            {
-                assetObj = GetAssetByGuid<T>(refPath.guid);
-                needUpdate = true;
-            }
-            return assetObj;
+            string path = refPath.path;
+            string guid = refPath.guid;
+            return GetAssetByWeakRef<T>(path, guid, out needUpdate);
         }
 
         public static T GetAssetByWeakRef<T>(SerializedProperty property, out bool needUpdate) where T : UnityEngine.Object
         {
-            T assetObj = GetAssetByPath<T>(property.FindPropertyRelative("path").stringValue);
-            needUpdate = false;
-            if (assetObj == null)
+            string path = GetPath(property).stringValue;
+            string guid = GetGuid(property).stringValue;
+            return GetAssetByWeakRef<T>(path, guid, out needUpdate);
+        }
+
+        public static T GetAssetByWeakRef<T>(string path, string guid, out bool needUpdate) where T : UnityEngine.Object
+        {
+            T assetObjByPath = GetAssetByPath<T>(path);
+            T assetObjByGuid = GetAssetByGuid<T>(guid);
+            needUpdate = assetObjByPath != assetObjByGuid;
+            if (assetObjByGuid != null)
             {
-                assetObj = GetAssetByGuid<T>(property.FindPropertyRelative("guid").stringValue);
-                if (assetObj != null)
-                {
-                    needUpdate = true;
-                }
+                return assetObjByGuid;
             }
-            return assetObj;
+            if (assetObjByPath != null)
+            {
+                return assetObjByPath;
+            }
+            return null;
         }
 
         public static T PropertyField<T>(string name, AssetWeakRef weakRef, ref bool isDirty, Action<AssetWeakRef> setter, params GUILayoutOption[] options) where T : UnityEngine.Object
@@ -80,6 +104,17 @@ namespace MonMoose.Core
                 isDirty = true;
             }
             return asset;
+        }
+
+        public static SerializedProperty GetPath(SerializedProperty sp)
+        {
+            return sp.FindPropertyRelative("path");
+        }
+
+
+        public static SerializedProperty GetGuid(SerializedProperty sp)
+        {
+            return sp.FindPropertyRelative("guid");
         }
 
         private static T GetAssetByPath<T>(string path) where T : UnityEngine.Object
