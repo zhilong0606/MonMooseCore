@@ -120,10 +120,9 @@ namespace MonMoose.Core
             DrawInspectorTemplate<string>(fieldInfo, obj, EditorGUILayout.TextField, (x, y) => x == y, ref isDirty);
         }
 
-        private static bool DrawInspectorAssetWeakRef(FieldInfo fieldInfo, object obj, ref bool isDirty)
+        private static void DrawInspectorAssetWeakRef(FieldInfo fieldInfo, object obj, ref bool isDirty)
         {
             AssetWeakRefEditorUtility.PropertyField<UnityEngine.Object>(fieldInfo.Name, (AssetWeakRef)fieldInfo.GetValue(obj), ref isDirty, awr => fieldInfo.SetValue(obj, awr));
-            return true;
         }
 
         private static void DrawInspectorEnum(FieldInfo fieldInfo, object obj, ref bool isDirty)

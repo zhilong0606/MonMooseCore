@@ -19,8 +19,7 @@ namespace MonMoose.Core
             }
             EditorGUI.BeginChangeCheck();
 
-            bool isDirty = false;
-            AssetWeakRefEditorUtility.PropertyField<MonoScript>("Controller½Å±¾", group.scriptWeakRef, ref isDirty, a => group.scriptWeakRef = a);
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("scriptWeakRef"));
             EditorGUILayout.PropertyField(serializedObject.FindProperty("bindItemList"));
             if (GUILayout.Button("Generate Bind Code"))
             {
@@ -39,7 +38,7 @@ namespace MonMoose.Core
                     UIBindEditorUtility.GenerateBindCode(group);
                 }
             }
-            if (EditorGUI.EndChangeCheck() || isDirty)
+            if (EditorGUI.EndChangeCheck())
             {
                 serializedObject.ApplyModifiedProperties();
                 EditorUtility.SetDirty(target);
