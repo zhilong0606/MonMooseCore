@@ -47,7 +47,7 @@ namespace MonMoose.Core
                 fileWriter.AppendLine("namespace {0}", monoScript.GetClass().Namespace);
                 fileWriter.StartBlock();
             }
-            fileWriter.AppendLine("public partial class {0}", monoScript.name);
+            fileWriter.AppendLine("public partial class {0}", monoScript.GetClass().Name);
             fileWriter.StartBlock();
             {
                 foreach (var itemInfo in group.bindItemList)
@@ -137,7 +137,7 @@ namespace MonMoose.Core
             string fileNameWithoutExtension = FilePathUtility.GetFileNameWithoutExtension(scriptRefPath);
             string filePath = FilePathUtility.GetPath(outputFolderPath, fileNameWithoutExtension + "_Bind.cs");
             fileWriter.WriteFile(filePath);
-            Debug.Log("[UIBindEditorUtility] GenerateBindCode Finished: " + monoScript.name);
+            Debug.Log("[UIBindEditorUtility] GenerateBindCode Finished: " + monoScript.GetClass().Name);
             List<UIBindGroup> subGroupList = new List<UIBindGroup>();
             foreach (var itemInfo in group.bindItemList)
             {
@@ -253,7 +253,7 @@ namespace MonMoose.Core
                 MonoScript subMonoScript = GetMonoScriptBindGroup(subBindGroup);
                 if (subMonoScript != null)
                 {
-                    return subMonoScript.name;
+                    return subMonoScript.GetClass().Name;
                 }
             }
             else

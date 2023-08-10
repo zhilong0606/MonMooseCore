@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace MonMoose.Core
 {
-    [CustomEditor(typeof(UIBindGroup))]
+    //[CustomEditor(typeof(UIBindGroup))]
     public class UIBindGroupInspector : Editor
     {
         public override void OnInspectorGUI()
@@ -20,7 +20,7 @@ namespace MonMoose.Core
             EditorGUI.BeginChangeCheck();
 
             EditorGUILayout.PropertyField(serializedObject.FindProperty("scriptWeakRef"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("bindItemList"));
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("bindItemList"), true);
             if (GUILayout.Button("Generate Bind Code"))
             {
                 List<string> errorList = new List<string>();

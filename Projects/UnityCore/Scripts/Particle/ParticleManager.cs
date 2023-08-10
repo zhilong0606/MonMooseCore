@@ -43,7 +43,10 @@ namespace MonMoose.GameLogic
                 return null;
             }
             GameObject particleObj = GameObjectPoolManager.instance.Fetch(path);
-            particleObj.SetParent(parent);
+            if (parent != null)
+            {
+                particleObj.SetParent(parent);
+            }
             particleObj.transform.localScale = Vector3.one;
             particleObj.transform.localRotation = Quaternion.identity;
             particleObj.transform.localPosition = Vector3.zero;

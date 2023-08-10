@@ -49,12 +49,11 @@ namespace MonMoose.Core
         {
             if (go == null)
             {
-                Debug.LogError("Error: Left Value is Null!");
                 return;
             }
             if (parent == null)
             {
-                Debug.LogError("Error: Right Value is Null!");
+                Debug.LogError("Error: parent is null!");
                 return;
             }
             if (go.transform.parent != parent.transform)

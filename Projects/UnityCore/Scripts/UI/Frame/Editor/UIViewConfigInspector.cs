@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace MonMoose.Core
 {
-    [CustomPropertyDrawer(typeof(UIViewConfig), true)]
+    //[CustomPropertyDrawer(typeof(UIViewConfig), true)]
     public class UIViewConfigInspector : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
@@ -31,7 +31,7 @@ namespace MonMoose.Core
                 if (bindGroup != null)
                 {
                     MonoScript monoScript = AssetWeakRefEditorUtility.GetAssetByWeakRef<MonoScript>(bindGroup.scriptWeakRef);
-                    string typeName = monoScript != null ? monoScript.name : string.Empty;
+                    string typeName = monoScript != null ? monoScript.GetClass().Name : string.Empty;
                     if (property.FindPropertyRelative("typeName").stringValue != typeName)
                     {
                         property.FindPropertyRelative("typeName").stringValue = typeName;

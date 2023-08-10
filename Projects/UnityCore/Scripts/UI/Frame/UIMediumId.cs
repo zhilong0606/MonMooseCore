@@ -13,5 +13,7 @@ namespace MonMoose.Core
         WorldMain,
         BattleMain,
         BattleTop,
+        BattlePrepare,
+        BattleResult,
     }
 }
