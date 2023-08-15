@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace MonMoose.Core
 {
-    [CreateAssetMenu(fileName = "UIMediumConfigInventory", menuName = "Custom Asset/UI/UIMediumConfigInventory")]
+    [CreateAssetMenu(fileName = "UIMediumConfigInventory", menuName = "UI Asset/UIMediumConfigInventory")]
     public class UIMediumConfigInventory : ScriptableObject
     {
         public const string path = "Assets/Res/UI/Common/Medium/UIMediumConfigInventory.asset";

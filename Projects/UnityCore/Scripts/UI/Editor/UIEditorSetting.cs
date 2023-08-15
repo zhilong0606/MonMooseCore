@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace MonMoose.Core
 {
-    [CreateAssetMenu(fileName = "UIEditorSetting", menuName = "Custom Asset/UI/UIEditorSetting")]
+    [CreateAssetMenu(fileName = "UIEditorSetting", menuName = "UI Asset/UI/UIEditorSetting")]
     public class UIEditorSetting : ScriptableObject
     {
         public string mediumNamespace;

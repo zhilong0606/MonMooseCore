@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace MonMoose.Core
 {
-    [CreateAssetMenu(fileName = "UIMediumConfig", menuName = "Custom Asset/UI/UIMediumConfig")]
+    [CreateAssetMenu(fileName = "UIMediumConfig", menuName = "UI Asset/UI/UIMediumConfig")]
     public class UIMediumConfig : ScriptableObject
     {
         public EnumString<UIMediumId> mediumId;
