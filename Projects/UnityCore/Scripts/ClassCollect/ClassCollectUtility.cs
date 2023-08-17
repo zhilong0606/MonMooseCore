@@ -81,10 +81,6 @@ namespace MonMoose.Core.ClassCollect
 
         private static bool CheckTypeNeedCollect(Type type)
         {
-            if (!type.IsClass)
-            {
-                return false;
-            }
             if (m_exceptCollectTypeList.Contains(type))
             {
                 return false;
