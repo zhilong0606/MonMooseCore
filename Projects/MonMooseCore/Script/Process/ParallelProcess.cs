@@ -17,11 +17,10 @@ namespace MonMoose.Core
                     {
                         continue;
                     }
-                    if (StartSubProcessAndCheckRunning(process))
+                    if (!StartSubProcessAndCheckRunning(process))
                     {
-                        break;
+                        OnSubProcessEnd(process);
                     }
-                    OnSubProcessEnd(process);
                 }
             }
             else
