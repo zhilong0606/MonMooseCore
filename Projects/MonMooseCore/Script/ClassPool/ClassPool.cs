@@ -281,7 +281,8 @@ namespace MonMoose.Core
             {
                 if (sb.Length != 0)
                 {
-                    sb.Append("-->");
+                    //sb.Append("-->");
+                    sb.Append("\r\n");
                 }
                 sb.Append(match.Groups[match.Groups.Count - 1].Value);
             }
@@ -300,7 +301,8 @@ namespace MonMoose.Core
             {
                 if (sb.Length != 0)
                 {
-                    sb.Append("-->");
+                    //sb.Append("-->");
+                    sb.Append("\r\n");
                 }
                 sb.Append(match.Groups[match.Groups.Count - 1].Value);
             }

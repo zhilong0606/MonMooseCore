@@ -8,6 +8,13 @@ namespace MonMoose.Core
 {
     public static class UISizeTool
     {
+        [MenuItem("Tools/UI/Set Fit Size2")]
+        private static void SetFitSize2()
+        {
+            BuildTargetGroup buildTargetGroup = EditorUserBuildSettings.selectedBuildTargetGroup;
+            string str = PlayerSettings.GetScriptingDefineSymbolsForGroup(buildTargetGroup);
+            Debug.LogError(str);
+        }
 
         [MenuItem("Tools/UI/Set Fit Size")]
         private static void SetFitSize()

@@ -5,7 +5,6 @@ namespace MonMoose.Core
 {
     public class FileWriter : FileWriterBlockItemBlock
     {
-        private string m_lineEndStr = "\r\n";
         private string m_tabStr = "    ";
 
         public FileWriter()
@@ -16,7 +15,7 @@ namespace MonMoose.Core
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            GenerateResult(sb, m_lineEndStr, m_tabStr, 0);
+            GenerateResult(sb, System.Environment.NewLine, m_tabStr, 0);
             return sb.ToString();
         }
 
